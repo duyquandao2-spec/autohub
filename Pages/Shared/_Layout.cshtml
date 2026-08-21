@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090b0d" />
+    <meta name="description" content="AUTOHUB — trải nghiệm showroom số cho xe hiệu năng hiện đại." />
+    <title>@ViewData["Title"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/Images/apex-logo.png" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/press-signal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/detail.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header" data-header>
+        <div class="shell site-header__inner">
+            <a class="brand" href="/#home" aria-label="Về đầu trang"><img src="~/Images/apex-logo.png" alt="" /><span>AUTOHUB</span></a>
+            <nav class="desktop-nav" aria-label="Điều hướng chính"><a href="/#home">Trang chủ</a><a href="/#machines">Dòng xe</a><a href="/#experience">Trải nghiệm</a><a href="/#technology">Công nghệ</a></nav>
+            <div class="header-actions"><a class="search-link" href="/#machines" aria-label="Tìm xe">⌕</a><button class="menu-button" type="button" data-menu-button aria-expanded="false" aria-label="Mở menu">☰</button></div>
+        </div>
+        <nav class="mobile-nav" data-mobile-nav aria-label="Điều hướng di động"><a href="/#home">Trang chủ</a><a href="/#machines">Dòng xe</a><a href="/#experience">Trải nghiệm</a><a href="/#technology">Công nghệ</a></nav>
+    </header>
+    @RenderBody()
+    <footer class="site-footer shell"><div><img src="~/Images/apex-logo.png" alt="" /><span>AUTOHUB</span></div><p>© 2026 AUTOHUB. Thiết kế để cảm nhận chuyển động.</p><a href="/#home">LÊN ĐẦU TRANG ↑</a></footer>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/press-signal.js" asp-append-version="true" defer></script>
+</body>
+</html>

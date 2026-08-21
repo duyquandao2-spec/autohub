@@ -1,0 +1,185 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "AUTOHUB — Chuyển động có ký ức";
+}
+
+<main>
+    <section id="home" class="hero" data-hero>
+        <img class="hero__image" src="~/Images/hero-graphite.jpg" alt="Mẫu grand tourer điện màu graphite của AUTOHUB" />
+        <div class="hero__grid"></div>
+        <div class="hero__vignette"></div>
+        <div class="hero__sweep" aria-hidden="true"></div>
+        <div class="shell hero__content">
+            <div class="hero__copy reveal">
+                <p class="eyebrow">Bộ máy hiệu năng 2026 · Hà Nội</p>
+                <h1>CHUYỂN ĐỘNG<br /><span class="hero__subtitle">CÓ KÝ ỨC.</span></h1>
+                <p class="hero__lede">Một không gian tuyển chọn xe hiệu năng dành cho những người nhìn thấy kỹ thuật trong từng đường cong.</p>
+                <div class="hero__actions">
+                    <a class="button button--light" href="#machines">Khám phá dòng xe <span>→</span></a>
+                    <a class="text-action" href="#experience">Xem trải nghiệm <span class="circle-icon">›</span></a>
+                </div>
+            </div>
+            <div class="hero__mark" aria-hidden="true">AUTOHUB</div>
+        </div>
+    </section>
+
+    <section class="metrics shell" aria-label="Thông số vận hành">
+        <article class="metric-card reveal"><div><span class="metric-card__icon">◌</span><span class="metric-card__number">01</span></div><h2>Tốc độ cực đại</h2><p>Phản hồi tức thời, sẵn sàng bứt tốc khi đường phía trước mở ra.</p></article>
+        <article class="metric-card reveal reveal--delay-1"><div><span class="metric-card__icon">⌁</span><span class="metric-card__number">02</span></div><h2>Điều hướng chính xác</h2><p>Cân bằng lực lái với độ bám, để mọi cú đánh lái đều có chủ đích.</p></article>
+        <article class="metric-card reveal reveal--delay-2"><div><span class="metric-card__icon">↯</span><span class="metric-card__number">03</span></div><h2>Hiệu năng điện</h2><p>Mô-men xoắn mạnh mẽ cùng quãng đường đủ dài cho một ngày không giới hạn.</p></article>
+    </section>
+
+    <section id="press" class="press-signal" data-press-signal>
+        <div class="shell">
+            <div class="press-signal__header reveal">
+                <div>
+                    <p class="press-signal__eyebrow">PRESS SIGNAL / 2026</p>
+                    <h2 class="press-signal__title">Mạch sống công nghệ<br /><span>Góc nhìn đa chiều.</span></h2>
+                </div>
+                <p class="press-signal__desc">Những tín hiệu đáng đọc từ báo đài, hiệp hội và các hãng đang tái định nghĩa hiệu năng điện.</p>
+            </div>
+            <div data-press-content></div>
+        </div>
+    </section>
+
+    <section class="shell brand-panel" id="technology">
+        <div class="section-bar reveal">
+            <div><p class="eyebrow">Điểm chạm thương hiệu</p><h2>Tìm nhịp lái của bạn.</h2></div>
+            <a class="text-action text-action--muted" asp-page="/Index">Đặt lại bộ lọc <span>↘</span></a>
+        </div>
+        <div class="brand-carousel reveal reveal--delay-1" data-brand-carousel aria-label="Bộ lọc thương hiệu">
+            <button type="button" class="brand-carousel__arrow brand-carousel__arrow--prev" data-carousel-prev aria-label="Thương hiệu trước">‹</button>
+            <div class="brand-carousel__track" data-carousel-track>
+                <a class="brand-chip brand-chip--slide @(Model.ActiveBrand == "ALL" ? "is-active" : "")" asp-page="/Index">TẤT CẢ</a>
+                @foreach (var brand in Model.Brands)
+                {
+                    <a class="brand-chip brand-chip--slide @(string.Equals(Model.ActiveBrand, brand, StringComparison.OrdinalIgnoreCase) ? "is-active" : "")" asp-page="/Index" asp-route-brand="@brand">@brand</a>
+                }
+            </div>
+            <button type="button" class="brand-carousel__arrow brand-carousel__arrow--next" data-carousel-next aria-label="Thương hiệu tiếp">›</button>
+        </div>
+    </section>
+
+    <section id="experience" class="split-section">
+        <div class="shell split-section__grid">
+            <article class="split-copy reveal">
+                <div><p class="eyebrow">Thẩm mỹ có lực</p><h2>Đường nét luôn có lý do.</h2></div>
+                <div><p>Mỗi mặt cắt, khoảng hở và vùng sáng được tạo ra để hướng gió, điều tiết trọng lượng thị giác và khiến người lái cảm nhận được tốc độ ngay cả khi xe đứng yên.</p><button class="button button--outline" type="button" data-scroll-target="machines">Mở dữ liệu hiệu năng <span>↗</span></button></div>
+            </article>
+            <article class="telemetry-stage reveal reveal--delay-1">
+                <img src="~/Images/aero-study.jpg" alt="Đầu xe hiệu năng trong không gian tối" />
+                <svg class="trajectory" viewBox="0 0 700 510" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 418 C180 457 220 110 420 220 S570 460 720 54" /></svg>
+                <div class="machine-readout"><small>AERO VECTOR</small><strong>0.23 Cd</strong></div>
+                <p class="stage-label"><i></i>AERODYNAMIC STUDY / 01</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="shell cabin-section">
+        <article class="telemetry-stage cabin-visual reveal">
+            <img src="~/Images/cockpit-focus.jpg" alt="Khoang lái hiệu năng với màn hình kỹ thuật số" />
+            <svg class="trajectory" viewBox="0 0 700 520" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 440 C118 280 220 510 348 320 S542 138 720 240" /></svg>
+            <div class="machine-readout"><small>FOCUS MODE</small><strong>Driver I/O</strong></div>
+            <div class="stage-caption"><p class="eyebrow">Cockpit / 02</p><p>Một bề mặt điều khiển tập trung vào quyết định thay vì sự phân tán.</p></div>
+        </article>
+        <article class="cabin-copy reveal reveal--delay-1"><p class="eyebrow">Công nghệ đúng chỗ</p><h2>Ít nhiễu hơn.<br />Cảm nhận nhiều hơn.</h2><p>Khoang lái được tổ chức quanh tầm nhìn, chạm và phản hồi. Những gì bạn cần ở đúng thời điểm; mọi thứ khác lùi lại sau trải nghiệm cầm lái.</p><div class="number-grid"><div><strong>14.6"</strong><span>MÀN HÌNH LIỀN KHỐI</span></div><div><strong>360°</strong><span>NHẬN BIẾT KHÔNG GIAN</span></div></div></article>
+    </section>
+
+    <section id="machines" class="machines-section">
+        <div class="shell">
+            <div class="machines-heading reveal"><div><p class="eyebrow">Dòng máy được tuyển chọn</p><h2>Chọn cỗ máy<br />tạo lực hút.</h2></div><div class="machine-summary"><small>SELECTION // @Model.PagedResult.TotalItems.ToString("00")</small><strong>@Model.PagedResult.TotalItems.ToString("00") UNITS</strong><svg viewBox="0 0 192 32" preserveAspectRatio="none" aria-hidden="true"><path d="M0 29 C54 29 79 3 119 17 S160 26 192 1" /></svg></div></div>
+
+            <div class="search-bar reveal reveal--delay-1" data-search-bar>
+                <div class="search-input-wrap">
+                    <input type="text" class="search-input" data-search-input placeholder="Tìm kiếm theo thương hiệu, mẫu xe, phiên bản..." autocomplete="off" value="@(Model.SearchQuery ?? "")" />
+                    <button type="button" class="search-btn" data-search-btn aria-label="Tìm kiếm">⌕</button>
+                </div>
+                <div class="search-suggestions" data-search-suggestions></div>
+            </div>
+
+            <div class="machine-status reveal reveal--delay-1"><span>HIỂN THỊ <b>@Model.PagedResult.TotalItems</b> MÁY @(Model.ActiveBrand != "ALL" ? $"// {Model.ActiveBrand}" : "")</span><span>◫ TELEMETRY SELECTOR</span></div>
+            <div class="machine-grid">
+                @foreach (var vehicle in Model.PagedResult.Items)
+                {
+                    <article class="machine-card reveal" data-vehicle-card
+                             data-slug="@vehicle.Slug"
+                             data-brand="@vehicle.Brand"
+                             data-model="@vehicle.Model"
+                             data-variant="@vehicle.Variant"
+                             data-name="@vehicle.Name"
+                             data-category="@vehicle.Category"
+                             data-fuel="@vehicle.FuelType"
+                             data-drivetrain="@vehicle.Drivetrain">
+                        <a class="machine-card__link" asp-page="/Vehicles/Detail" asp-route-slug="@vehicle.Slug" aria-label="Xem chi tiết @vehicle.Name">
+                            <div class="machine-card__image">
+                                <img src="@vehicle.ImagePath" alt="@vehicle.Name" />
+                                <div class="image-grid"></div>
+                                <span>@vehicle.Brand</span>
+                                <small>@vehicle.Code</small>
+                                <svg viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true"><path d="M0 54 C78 55 90 12 155 30 S228 52 300 7" /></svg>
+                            </div>
+                            <div class="machine-card__body">
+                                <div>
+                                    <h3>@vehicle.Name</h3>
+                                    <p>@vehicle.Category · @vehicle.Drivetrain</p>
+                                </div>
+                                <span class="machine-open" aria-hidden="true">↗</span>
+                                <div class="machine-specs">
+                                    <div>
+                                        <small>CÔNG SUẤT</small>
+                                        <strong>@vehicle.PowerDisplay</strong>
+                                    </div>
+                                    <div>
+                                        <small>@(vehicle.FuelType == "EV" ? "TẦM HOẠT ĐỘNG" : "TIÊU THỤ")</small>
+                                        <strong>@(vehicle.FuelType == "EV" ? vehicle.Range : vehicle.FuelEconomyDisplay)</strong>
+                                    </div>
+                                    <div>
+                                        <small>GIÁ THAM KHẢO</small>
+                                        <strong>@vehicle.Price</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                }
+            </div>
+            @if (Model.PagedResult.TotalItems == 0)
+            {
+                <div class="empty-state"><p>Không tìm thấy xe phù hợp với bộ lọc hiện tại.</p><a asp-page="/Index">Trở về toàn bộ dòng xe</a></div>
+            }
+
+            @if (Model.PagedResult.TotalPages > 1)
+            {
+                <nav class="pagination reveal" aria-label="Phân trang xe" data-pagination>
+                    <a class="pagination__btn @(Model.PagedResult.HasPrevious ? "" : "is-disabled")"
+                       href="@(Model.PagedResult.HasPrevious ? Model.BuildPageUrl(Model.PagedResult.CurrentPage - 1) : "#")"
+                       aria-label="Trang trước" @(Model.PagedResult.HasPrevious ? "" : "tabindex=\"-1\" aria-disabled=\"true\"")>←</a>
+
+                    @foreach (var p in Model.VisiblePages)
+                    {
+                        if (p < 0)
+                        {
+                            <span class="pagination__ellipsis">…</span>
+                        }
+                        else
+                        {
+                            <a class="pagination__page @(p == Model.PagedResult.CurrentPage ? "is-active" : "")"
+                               href="@Model.BuildPageUrl(p)"
+                               aria-label="Trang @p" @(p == Model.PagedResult.CurrentPage ? "aria-current=\"page\"" : "")>@p</a>
+                        }
+                    }
+
+                    <a class="pagination__btn @(Model.PagedResult.HasNext ? "" : "is-disabled")"
+                       href="@(Model.PagedResult.HasNext ? Model.BuildPageUrl(Model.PagedResult.CurrentPage + 1) : "#")"
+                       aria-label="Trang tiếp" @(Model.PagedResult.HasNext ? "" : "tabindex=\"-1\" aria-disabled=\"true\"")>→</a>
+                </nav>
+            }
+        </div>
+    </section>
+
+    <section class="shell appointment reveal">
+        <div><p class="eyebrow">Bắt đầu từ cảm giác</p><h2>Lái thử không phải là bước cuối. Đó là bước đầu.</h2></div><div><p>Đặt lịch một cuộc hẹn riêng, chọn mẫu xe và cung đường bạn muốn cảm nhận. Chúng tôi giữ phần còn lại thật gọn.</p><button class="button button--signal" type="button" data-appointment>Đặt lịch lái thử <span>→</span></button></div>
+    </section>
+
+</main>

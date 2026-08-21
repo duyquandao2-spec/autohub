@@ -1,0 +1,84 @@
+@page "{slug}"
+@model AutoHub.Pages.Vehicles.DetailModel
+@{
+    ViewData["Title"] = $"{Model.Vehicle.Name} — AUTOHUB";
+}
+
+<main class="product-page">
+    <section class="product-hero">
+        <div class="shell">
+            <a class="product-back" asp-page="/Index" asp-fragment="machines">← Quay lại dòng xe</a>
+            <div class="product-hero__grid">
+                <div class="product-hero__copy reveal">
+                    <p class="eyebrow">@Model.Vehicle.Code · @Model.Vehicle.Brand</p>
+                    <h1>@Model.Vehicle.Name</h1>
+                    <p class="product-hero__kind">@Model.Vehicle.Category · @Model.Vehicle.Drivetrain</p>
+                    <p class="product-hero__lede">@Model.Vehicle.Description</p>
+                    <div class="product-hero__actions">
+                        <button class="button button--signal" type="button" data-appointment>Đặt lịch lái thử <span>→</span></button>
+                        <a class="text-action" href="#specifications">Đọc thông số <span class="circle-icon">↓</span></a>
+                    </div>
+                    <div class="product-signal"><i></i><span>TÍN HIỆU ĐÃ HIỆU CHỈNH / @Model.Vehicle.Code</span></div>
+                </div>
+                <div class="product-hero__visual reveal reveal--delay-1">
+                    <img src="@Model.Vehicle.ImagePath" alt="@Model.Vehicle.Name" data-product-image />
+                    <div class="product-visual__grid"></div>
+                    <svg class="product-trajectory" viewBox="0 0 700 560" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 472 C138 518 226 175 400 276 S544 518 720 70" /></svg>
+                    <div class="product-visual__readout"><small>DRIVE PROFILE</small><strong>@Model.Vehicle.Drivetrain</strong></div>
+                    <div class="product-code">@Model.Vehicle.Code</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="specifications" class="shell product-specification-section">
+        <div class="product-section-heading reveal"><div><p class="eyebrow">Cấu hình hiệu năng</p><h2>Dữ liệu dành cho<br />quyết định cầm lái.</h2></div><p>Mọi thông số được trình bày như một bảng telemetry: ít diễn giải, tập trung vào tín hiệu quan trọng nhất.</p></div>
+        <div class="product-spec-grid reveal reveal--delay-1">
+            <article><small>0 — 100 KM/H</small><strong>@Model.Vehicle.AccelerationDisplay</strong><span>Phản hồi từ trạng thái đứng yên</span></article>
+            <article><small>TỐC ĐỘ CỰC ĐẠI</small><strong>@Model.Vehicle.TopSpeedDisplay</strong><span>Giới hạn điện tử theo cấu hình</span></article>
+            <article><small>CÔNG SUẤT</small><strong>@Model.Vehicle.PowerDisplay</strong><span>Đỉnh công suất khả dụng</span></article>
+            @if (Model.Vehicle.FuelType == "EV")
+            {
+                <article><small>TẦM HOẠT ĐỘNG</small><strong>@Model.Vehicle.Range</strong><span>Chu trình hỗn hợp WLTP</span></article>
+                <article><small>SẠC NHANH</small><strong>@Model.Vehicle.FastCharging</strong><span>Sạc nhanh DC</span></article>
+            }
+            else
+            {
+                <article><small>Tiêu thụ nhiên liệu</small><strong>@Model.Vehicle.FuelEconomyDisplay</strong><span>Chu trình hỗn hợp</span></article>
+                <article><small>Hệ dẫn động</small><strong>@Model.Vehicle.Drivetrain</strong><span>@(Model.Vehicle.FuelType == "Diesel" ? "Động cơ diesel" : "Động cơ xăng")</span></article>
+            }
+            <article><small>GIÁ THAM KHẢO</small><strong>@Model.Vehicle.PriceDisplay</strong><span>Đã gồm cấu hình tiêu chuẩn</span></article>
+        </div>
+    </section>
+
+    @if (Model.Vehicle.Colors.Any())
+    {
+        <section class="shell product-color-section">
+            <div class="product-section-heading reveal"><div><p class="eyebrow">Lựa chọn màu sắc</p><h2>Tìm màu<br />của riêng bạn.</h2></div><p>Mỗi màu sắc được thiết kế để tôn lên đường nét và tính cách của @Model.Vehicle.Name.</p></div>
+            <div class="product-color-grid reveal reveal--delay-1">
+                @foreach (var color in Model.Vehicle.Colors)
+                {
+                    <button class="color-swatch @(color == Model.Vehicle.Colors.First() ? "is-active" : "")"
+                            type="button"
+                            data-color-name="@color.Name"
+                            data-color-image="@color.ImagePath"
+                            style="background-color: @color.Code;"
+                            aria-label="@color.Name">
+                        <span class="color-swatch__name">@color.Name</span>
+                    </button>
+                }
+            </div>
+        </section>
+    }
+
+    <section class="product-story-section">
+        <div class="shell product-story">
+            <div class="product-story__lead reveal"><p class="eyebrow">Lý do tồn tại</p><h2>Không chỉ nhanh.<br />Mà còn đúng nhịp.</h2></div>
+            <div class="product-story__content reveal reveal--delay-1"><p>@Model.Vehicle.Description Xe tập trung vào cảm giác ổn định khi tăng tốc, khoảng lặng trong khoang lái và độ chính xác của từng chuyển động thân xe.</p><div class="product-story__rule"></div><p class="product-story__mono">@Model.Vehicle.Brand / @Model.Vehicle.Category / @Model.Vehicle.Drivetrain</p></div>
+        </div>
+    </section>
+
+    <section class="shell product-cta reveal">
+        <div><p class="eyebrow">Bước tiếp theo</p><h2>Để dữ liệu lùi lại.<br />Để cảm giác lên tiếng.</h2></div><div><p>Chọn một khung giờ riêng để trực tiếp trải nghiệm cách @Model.Vehicle.Name phản hồi với cung đường của bạn.</p><button class="button button--light" type="button" data-appointment>Yêu cầu tư vấn <span>→</span></button></div>
+    </section>
+</main>

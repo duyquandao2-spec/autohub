@@ -1,0 +1,17 @@
+# Build outputs and restore assets are machine-specific and must be regenerated locally.
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local configuration / secrets
+appsettings.json
+appsettings.*.json
+
+# Environment variables
+.env
+.env.*
+!.env.example
