@@ -1,0 +1,55 @@
+@page
+@model AutoHub.Pages.Admin.Consultations.IndexModel
+@{
+    ViewData["Title"] = "Yêu cầu tư vấn";
+    ViewData["AdminBreadcrumb"] = "Yêu cầu tư vấn";
+    ViewData["CurrentPage"] = Model.Paged.CurrentPage;
+    ViewData["TotalPages"] = Model.Paged.TotalPages == 0 ? 1 : Model.Paged.TotalPages;
+    ViewData["BaseUrl"] = "/admin/consultations";
+    ViewData["Query"] = new Dictionary<string, string?> { ["status"] = Model.Status, ["search"] = Model.Search };
+}
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <select class="apx-select" name="status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="NEW" selected="@(Model.Status == "NEW")">Mới</option>
+            <option value="CONTACTED" selected="@(Model.Status == "CONTACTED")">Đã liên hệ</option>
+            <option value="SCHEDULED" selected="@(Model.Status == "SCHEDULED")">Đã hẹn</option>
+            <option value="CLOSED" selected="@(Model.Status == "CLOSED")">Đã chốt</option>
+            <option value="CANCELLED" selected="@(Model.Status == "CANCELLED")">Hủy</option>
+        </select>
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo tên, điện thoại, email..." />
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn apx-btn--ghost" asp-page="/admin/consultations/index">Đặt lại</a>
+    </form>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Khách hàng</th><th>Liên hệ</th><th>Ngày ưa thích</th><th>Phương thức</th><th>Ngân sách</th><th>Trạng thái</th><th>Ngày tạo</th></tr></thead>
+            <tbody>
+                @if (Model.Paged.Items.Count == 0)
+                {
+                    <tr><td colspan="7" class="muted">Không có yêu cầu nào.</td></tr>
+                }
+                @foreach (var c in Model.Paged.Items)
+                {
+                    <tr>
+                        <td><a asp-page="/admin/consultations/detail" asp-route-id="@c.Id">@c.FullName</a>@if (!string.IsNullOrEmpty(c.AssignedStaffName)) { <br /><span class="muted">↳ @c.AssignedStaffName</span> }</td>
+                        <td>@c.Phone@if (!string.IsNullOrEmpty(c.Email)) { <br /><span class="muted">@c.Email</span> }</td>
+                        <td class="muted">@(c.PreferredDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@c.ConsultationMethod</td>
+                        <td>@c.Budget</td>
+                        <td><span class="badge badge--@AutoHub.Services.StatusWorkflow.BadgeClass(c.Status)">@AutoHub.Services.StatusWorkflow.Label(c.Status)</span></td>
+                        <td class="muted">@c.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Paged.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

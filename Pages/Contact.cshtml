@@ -1,0 +1,89 @@
+@page
+@model AutoHub.Pages.ContactModel
+@{
+    ViewData["Title"] = "Liên hệ — AUTOHUB";
+}
+
+<main class="form-page">
+    <section class="form-hero form-hero--compact">
+        <div class="shell">
+            <p class="eyebrow">Kết nối · AUTOHUB Hà Nội</p>
+            <h1>LIÊN HỆ<br /><span class="form-hero__accent">TRỰC TIẾP.</span></h1>
+            <p class="form-hero__lede">Gửi câu hỏi, yêu cầu báo giá hoặc đề xuất hợp tác — chúng tôi phản hồi trong giờ làm việc.</p>
+        </div>
+    </section>
+
+    <section class="shell form-section">
+        @if (Model.Submitted)
+        {
+            <article class="booking-success reveal is-visible" aria-live="polite">
+                <div class="booking-success__icon">✓</div>
+                <h2>Tin nhắn đã được gửi.</h2>
+                <p>Mã tham chiếu: <strong class="booking-success__ref">@Model.MessageReference</strong></p>
+                <p class="booking-success__note">Đội ngũ AUTOHUB sẽ phản hồi qua số điện thoại hoặc email bạn cung cấp trong vòng 24 giờ làm việc.</p>
+                <div class="booking-success__actions">
+                    <a class="button button--light" asp-page="/Index">Về trang chủ <span>→</span></a>
+                    <a class="text-action" asp-page="/Contact">Gửi tin nhắn khác <span class="circle-icon">›</span></a>
+                </div>
+            </article>
+        }
+        else
+        {
+            <form class="contact-form" method="post">
+                <div class="form-layout form-layout--single">
+                    <div class="form-main reveal">
+                        <div class="form-grid">
+                            <div class="field field--full">
+                                <label asp-for="Input.FullName"></label>
+                                <input asp-for="Input.FullName" autocomplete="name" placeholder="Nguyễn Văn A" />
+                                <span asp-validation-for="Input.FullName" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="Input.Phone"></label>
+                                <input asp-for="Input.Phone" inputmode="tel" autocomplete="tel" placeholder="0912345678" />
+                                <span asp-validation-for="Input.Phone" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="Input.Email"></label>
+                                <input asp-for="Input.Email" type="email" autocomplete="email" placeholder="ban@email.com (không bắt buộc)" />
+                                <span asp-validation-for="Input.Email" class="field-error"></span>
+                            </div>
+                            <div class="field field--full">
+                                <label asp-for="Input.Subject">Chủ đề</label>
+                                <select asp-for="Input.Subject">
+                                    <option value="">— Chọn chủ đề —</option>
+                                    @foreach (var subject in AutoHub.Pages.ContactModel.Subjects)
+                                    {
+                                        <option value="@subject.Value">@subject.Label</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Input.Subject" class="field-error"></span>
+                            </div>
+                            <div class="field field--full">
+                                <label asp-for="Input.Content"></label>
+                                <textarea asp-for="Input.Content" rows="5" placeholder="Nội dung bạn muốn trao đổi với AUTOHUB…"></textarea>
+                                <span asp-validation-for="Input.Content" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="form-aside reveal reveal--delay-1" id="showroom">
+                        <h3>Thông tin showroom</h3>
+                        <ul>
+                            <li><strong>Địa chỉ:</strong> Khu đô thị mới, Hà Nội.</li>
+                            <li><strong>Hotline:</strong> 1900 0000.</li>
+                            <li><strong>Giờ làm việc:</strong> 08:00 – 17:00, Thứ 2 – Chủ nhật.</li>
+                            <li><strong>Email:</strong> contact&#64;autohub.vn</li>
+                        </ul>
+                        <div class="form-aside__signal"><i></i><span>AUTOHUB SHOWROOM · HÀ NỘI</span></div>
+                    </aside>
+                </div>
+
+                <div class="form-actions">
+                    <button class="button button--signal button--wide" type="submit">Gửi tin nhắn <span>→</span></button>
+                    <a class="text-action text-action--muted" asp-page="/TestDrive">Đặt lịch lái thử thay vì liên hệ <span>↗</span></a>
+                </div>
+            </form>
+        }
+    </section>
+</main>

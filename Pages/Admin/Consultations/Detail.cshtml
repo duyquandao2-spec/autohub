@@ -1,0 +1,96 @@
+@page
+@model AutoHub.Pages.Admin.Consultations.DetailModel
+@{
+    ViewData["Title"] = "Chi tiết yêu cầu";
+    ViewData["AdminBreadcrumb"] = $"Yêu cầu #{Model.Consultation!.Id}";
+    var c = Model.Consultation;
+}
+@if (TempData["Ok"] != null)
+{
+    <div class="apx-alert">@TempData["Ok"]</div>
+}
+@if (TempData["Err"] != null)
+{
+    <div class="apx-alert apx-alert--danger">@TempData["Err"]</div>
+}
+
+<div class="apx-bar">
+    <a class="apx-btn apx-btn--ghost" asp-page="/admin/consultations/index">← Danh sách</a>
+    <span class="badge badge--@AutoHub.Services.StatusWorkflow.BadgeClass(c.Status)">@AutoHub.Services.StatusWorkflow.Label(c.Status)</span>
+</div>
+
+<div class="apx-detail">
+    <div class="admin-grid" style="grid-template-columns:minmax(0,1fr);gap:18px">
+        <div class="apx-panel">
+            <div class="apx-panel__head"><h2>Thông tin khách hàng</h2></div>
+            <div class="apx-kv" style="padding:18px 20px">
+                <div class="apx-kv__item"><dt>Họ tên</dt><dd>@c.FullName</dd></div>
+                <div class="apx-kv__item"><dt>Điện thoại</dt><dd>@c.Phone</dd></div>
+                <div class="apx-kv__item"><dt>Email</dt><dd>@(c.Email ?? "—")</dd></div>
+                <div class="apx-kv__item"><dt>Phương thức</dt><dd>@c.ConsultationMethod</dd></div>
+                <div class="apx-kv__item"><dt>Ngày ưa thích</dt><dd>@(c.PreferredDate?.ToString("dd/MM/yyyy") ?? "—") @(c.PreferredTime ?? "")</dd></div>
+                <div class="apx-kv__item"><dt>Ngân sách</dt><dd>@(c.Budget ?? "—")</dd></div>
+                <div class="apx-kv__item"><dt>Xe quan tâm</dt><dd>@(c.Vehicle?.VariantName ?? "—")</dd></div>
+                <div class="apx-kv__item"><dt>Sở thích gọi lại</dt><dd>@(c.CallbackPreference ?? "—")</dd></div>
+                <div class="apx-kv__item" style="grid-column:1/-1"><dt>Yêu cầu</dt><dd>@(c.Message ?? "—")</dd></div>
+            </div>
+        </div>
+
+        <div class="apx-panel">
+            <div class="apx-panel__head"><h2>Xử lý</h2></div>
+            <div style="padding:18px 20px">
+                <form method="post" asp-page-handler="Status">
+                    <input type="hidden" name="id" value="@c.Id" />
+                    <div class="field" style="margin-bottom:12px">
+                        <label>Trạng thái</label>
+                        @if (!Model.IsTerminal)
+                        {
+                            <select class="apx-select" name="status" style="width:100%">
+                                @foreach (var s in Model.StatusOptions)
+                                {
+                                    <option value="@s" selected="@(c.Status == s)">@AutoHub.Services.StatusWorkflow.Label(s)@(s == c.Status ? " (hiện tại)" : "")</option>
+                                }
+                            </select>
+                            <span class="muted" style="font-size:.72rem">Quy trình: Mới → Đã liên hệ → Đã hẹn → Đã chốt · (hủy sớm bất kỳ giai đoạn nào)</span>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="status" value="@c.Status" />
+                            <p class="text-m">Trạng thái cuối: <strong>@AutoHub.Services.StatusWorkflow.Label(c.Status)</strong> — không thể thay đổi.</p>
+                        }
+                    </div>
+                    <div class="field" style="margin-bottom:14px">
+                        <label>Phân công nhân viên</label>
+                        <select class="apx-select" name="assignedStaffId" style="width:100%">
+                            <option value="">— Chưa phân công —</option>
+                            @foreach (var st in Model.Staff)
+                            {
+                                <option value="@st.Id" selected="@(c.AssignedStaffId == st.Id)">@st.FullName (@st.Email)</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="apx-btn" type="submit">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="apx-panel">
+            <div class="apx-panel__head"><h2>Ghi chú nội bộ</h2></div>
+            <div style="padding:18px 20px">
+                @foreach (var n in c.Notes)
+                {
+                    <div class="apx-note" style="margin-bottom:10px">@n.Note<small>@n.AuthorName · @n.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small></div>
+                }
+                @if (c.Notes.Count == 0)
+                {
+                    <p class="text-m">Chưa có ghi chú.</p>
+                }
+                <form method="post" asp-page-handler="Note">
+                    <input type="hidden" name="id" value="@c.Id" />
+                    <textarea name="note" class="apx-input" style="width:100%;min-height:90px;margin-top:12px" placeholder="Thêm ghi chú..."></textarea>
+                    <button class="apx-btn apx-btn--ghost" type="submit" style="margin-top:10px">Thêm ghi chú</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

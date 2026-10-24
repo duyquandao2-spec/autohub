@@ -1,0 +1,426 @@
+@page "/Finance"
+@model AutoHub.Pages.FinanceModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Dự toán chi phí lăn bánh & Trả góp — AUTOHUB";
+    var vehiclesJson = JsonSerializer.Serialize(Model.Vehicles.Select(v => new
+    {
+        id = v.Id,
+        slug = v.Slug,
+        name = v.Name,
+        brand = v.BrandName,
+        price = v.BasePrice,
+        priceFormatted = v.PriceDisplay,
+        image = v.ImagePath,
+        fuel = v.FuelType,
+        seats = v.Seats,
+        category = v.Category
+    }));
+}
+
+<main class="finance-page">
+    <section class="finance-hero">
+        <div class="shell">
+            <div class="finance-hero__badge">
+                <span class="pulse-dot"></span>
+                <span>TELEMETRY & FINANCIAL PLANNING / VN-MARKET</span>
+            </div>
+            <h1 class="finance-hero__title">Dự toán lăn bánh & Trả góp.</h1>
+            <p class="finance-hero__lead">
+                Dữ liệu tài chính minh bạch cho mọi mẫu xe trong showroom. Tính toán chính xác các loại thuế phí theo từng tỉnh thành và thiết kế lịch trả góp linh hoạt.
+            </p>
+        </div>
+    </section>
+
+    <section class="shell finance-content">
+        @if (Model.Submitted)
+        {
+            <div class="finance-alert finance-alert--success reveal">
+                <div class="finance-alert__icon">✓</div>
+                <div class="finance-alert__body">
+                    <h3>Yêu cầu tư vấn tài chính đã được gửi thành công!</h3>
+                    <p>Mã hồ sơ: <strong>@Model.ConsultationCode</strong>. Chuyên viên tài chính của AUTOHUB sẽ liên hệ lại với bạn trong vòng 30 phút để cung cấp bảng tính chi tiết và hồ sơ vay ưu đãi nhất.</p>
+                    <a asp-page="/Finance" class="button button--ghost" style="margin-top: 1rem;">Tạo dự toán mới</a>
+                </div>
+            </div>
+        }
+
+        <!-- Tool Mode Tabs -->
+        <div class="finance-tabs-nav" role="tablist" aria-label="Chế độ tính toán">
+            <button type="button" class="finance-tab-btn is-active" data-tab-target="#tab-onroad" role="tab" aria-selected="true">
+                <span class="tab-index">01</span>
+                <span class="tab-label">Chi phí lăn bánh</span>
+                <span class="tab-desc">Thuế, phí trước bạ & biển số</span>
+            </button>
+            <button type="button" class="finance-tab-btn" data-tab-target="#tab-installment" role="tab" aria-selected="false">
+                <span class="tab-index">02</span>
+                <span class="tab-label">Vay mua trả góp</span>
+                <span class="tab-desc">Lãi suất & kế hoạch thanh toán</span>
+            </button>
+        </div>
+
+        <!-- Vehicle Quick Selector Banner -->
+        <div class="finance-vehicle-card reveal">
+            <div class="finance-vehicle-card__media">
+                <img id="fin-vehicle-img" src="@(Model.SelectedVehicle?.ImagePath ?? "/Images/placeholder-car.jpg")" alt="Xe đã chọn" />
+            </div>
+            <div class="finance-vehicle-card__info">
+                <div class="finance-vehicle-card__badge" id="fin-vehicle-badge">@(Model.SelectedVehicle?.Category ?? "SEDAN") · @(Model.SelectedVehicle?.FuelType ?? "PETROL")</div>
+                <h2 class="finance-vehicle-card__name" id="fin-vehicle-name">@(Model.SelectedVehicle?.Name ?? "Chọn mẫu xe")</h2>
+                <div class="finance-vehicle-card__pricing">
+                    <span class="label">Giá niêm yết:</span>
+                    <strong class="val" id="fin-vehicle-price">@(Model.SelectedVehicle?.PriceDisplay ?? "Liên hệ")</strong>
+                </div>
+            </div>
+            <div class="finance-vehicle-card__selector">
+                <label for="fin-car-select" class="field-label">Chọn xe khác từ kho:</label>
+                <select id="fin-car-select" class="fin-select">
+                    @foreach (var car in Model.Vehicles)
+                    {
+                        <option value="@car.Slug" selected="@(car.Slug == Model.SelectedVehicle?.Slug)">
+                            @car.BrandName - @car.Name (@car.PriceDisplay)
+                        </option>
+                    }
+                </select>
+                <div class="custom-price-toggle">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="fin-custom-price-check" />
+                        <span>Tự điều chỉnh giá xe</span>
+                    </label>
+                    <input type="number" id="fin-custom-price-input" class="fin-input fin-input--price" placeholder="Nhập giá xe (VNĐ)" style="display: none;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: DỰ TOÁN LĂN BÁNH -->
+        <div class="finance-tab-pane is-active" id="tab-onroad" role="tabpanel">
+            <div class="finance-grid">
+                <!-- Inputs Left -->
+                <div class="finance-panel">
+                    <div class="panel-header">
+                        <h3>1. Thiết lập khu vực & tùy chọn</h3>
+                        <p class="panel-desc">Biểu phí trước bạ và đăng ký biển số áp dụng theo quy định hiện hành.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Khu vực đăng ký biển số:</label>
+                        <div class="fin-pill-group" id="fin-city-pills">
+                            <button type="button" class="fin-pill is-active" data-city="hanoi" data-tax="12" data-plate="20000000">Hà Nội (12%)</button>
+                            <button type="button" class="fin-pill" data-city="hcm" data-tax="10" data-plate="20000000">TP. Hồ Chí Minh (10%)</button>
+                            <button type="button" class="fin-pill" data-city="tier1" data-tax="12" data-plate="1000000">Hải Phòng / ĐN / QN (12%)</button>
+                            <button type="button" class="fin-pill" data-city="provinces" data-tax="10" data-plate="1000000">Tỉnh / Thành khác (10%)</button>
+                        </div>
+                    </div>
+
+                    <div class="fin-notice" id="ev-tax-incentive-notice" style="display: none;">
+                        <span class="notice-badge">ƯU ĐÃI XE ĐIỆN</span>
+                        <p>Mẫu xe này sử dụng động cơ điện (EV). Theo Nghị định số 10/2022/NĐ-CP của Chính phủ, lệ phí trước bạ đối với ô tô điện chạy pin là <strong>0%</strong>.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Thời gian nộp phí bảo trì đường bộ:</label>
+                        <div class="fin-pill-group" id="fin-road-fee-pills">
+                            <button type="button" class="fin-pill is-active" data-road-months="12">1 năm (1.560.000 đ)</button>
+                            <button type="button" class="fin-pill" data-road-months="24">2 năm (3.120.000 đ)</button>
+                            <button type="button" class="fin-pill" data-road-months="30">30 tháng (3.900.000 đ)</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="field-label">Tùy chọn bổ sung:</label>
+                        <div class="fin-checkbox-list">
+                            <label class="checkbox-card">
+                                <input type="checkbox" id="fin-opt-physical-insurance" checked />
+                                <div class="checkbox-card__body">
+                                    <div class="checkbox-card__title">Bảo hiểm vật chất xe (Thân vỏ ~1.5%)</div>
+                                    <div class="checkbox-card__sub" id="fin-phys-insurance-label">Bảo vệ rủi ro va quẹt, tai nạn, ngập nước</div>
+                                </div>
+                                <span class="checkbox-card__price" id="fin-phys-insurance-amount">0 đ</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="fin-action-cta">
+                        <button type="button" class="button button--ghost" id="btn-sync-to-loan">
+                            Chuyển sang tính Trả góp với số tiền này <span>→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Breakdown Right -->
+                <div class="finance-summary-card">
+                    <div class="summary-header">
+                        <span class="tag">BẢNG CHI TIẾT DỰ TOÁN</span>
+                        <h4>Chi phí hoàn thiện lăn bánh</h4>
+                    </div>
+
+                    <div class="breakdown-list">
+                        <div class="breakdown-item">
+                            <span class="item-name">Giá niêm yết xe</span>
+                            <strong class="item-val" id="bd-base-price">0 đ</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="item-name">
+                                Lệ phí trước bạ
+                                <small id="bd-tax-rate-sub">(12%)</small>
+                            </span>
+                            <strong class="item-val" id="bd-registration-tax">0 đ</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="item-name">Phí cấp biển số mới</span>
+                            <strong class="item-val" id="bd-plate-fee">20.000.000 đ</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="item-name">Phí kiểm định an toàn (Đăng kiểm)</span>
+                            <strong class="item-val" id="bd-inspection-fee">340.000 đ</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="item-name">Phí sử dụng đường bộ</span>
+                            <strong class="item-val" id="bd-road-fee">1.560.000 đ</strong>
+                        </div>
+                        <div class="breakdown-item">
+                            <span class="item-name">Bảo hiểm TNDS bắt buộc (1 năm)</span>
+                            <strong class="item-val" id="bd-mandatory-insurance">480.700 đ</strong>
+                        </div>
+                        <div class="breakdown-item" id="bd-physical-insurance-row">
+                            <span class="item-name">Bảo hiểm vật chất xe (1 năm)</span>
+                            <strong class="item-val" id="bd-physical-insurance">0 đ</strong>
+                        </div>
+                    </div>
+
+                    <div class="summary-total">
+                        <div class="total-label">TỔNG CHI PHÍ LĂN BÁNH TẠM TÍNH:</div>
+                        <div class="total-value" id="bd-total-onroad">0 đ</div>
+                        <p class="total-disclaimer">* Đã bao gồm các khoản thuế phí bắt buộc theo quy định pháp luật. Giá có thể thay đổi tùy thuộc vào chính sách ưu đãi của showroom tại từng thời điểm.</p>
+                    </div>
+
+                    <div class="summary-actions">
+                        <a href="#consult-form" class="button button--signal btn-block">Nhận báo giá lăn bánh chính thức</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: VAY TRẢ GÓP NGÂN HÀNG -->
+        <div class="finance-tab-pane" id="tab-installment" role="tabpanel">
+            <div class="finance-grid">
+                <!-- Loan Inputs Left -->
+                <div class="finance-panel">
+                    <div class="panel-header">
+                        <h3>1. Thiết lập gói vay</h3>
+                        <p class="panel-desc">Tùy chỉnh tỷ lệ trả trước, thời gian vay và mức lãi suất ngân hàng liên kết.</p>
+                    </div>
+
+                    <!-- Base price choice -->
+                    <div class="form-group">
+                        <label class="field-label">Khoản tiền tính toán vay:</label>
+                        <div class="fin-pill-group" id="fin-loan-base-pills">
+                            <button type="button" class="fin-pill is-active" data-loan-mode="car">Theo giá xe niêm yết</button>
+                            <button type="button" class="fin-pill" data-loan-mode="onroad">Bao gồm toàn bộ chi phí lăn bánh</button>
+                        </div>
+                        <div class="loan-base-display">
+                            <span>Giá trị tính vay:</span>
+                            <strong id="fin-loan-base-amount">0 đ</strong>
+                        </div>
+                    </div>
+
+                    <!-- Downpayment -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label class="field-label">Tỷ lệ trả trước:</label>
+                            <span class="slider-readout"><strong id="downpayment-percent-display">20</strong>%</span>
+                        </div>
+                        <input type="range" id="downpayment-slider" class="fin-slider" min="10" max="85" step="5" value="20" />
+                        <div class="fin-pill-group fin-pill-group--sm" id="downpayment-pills">
+                            <button type="button" class="fin-pill fin-pill--sm" data-pct="15">15%</button>
+                            <button type="button" class="fin-pill fin-pill--sm is-active" data-pct="20">20%</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-pct="30">30%</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-pct="50">50%</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-pct="70">70%</button>
+                        </div>
+                        <div class="slider-sub-readout">
+                            <span>Số tiền trả trước: <strong id="downpayment-cash-display">0 đ</strong></span>
+                            <span>Số tiền vay ngân hàng: <strong id="loan-amount-display">0 đ</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Loan Term -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label class="field-label">Thời hạn vay vốn:</label>
+                            <span class="slider-readout"><strong id="loan-term-display">5</strong> năm (<span id="loan-term-months-display">60</span> tháng)</span>
+                        </div>
+                        <input type="range" id="loan-term-slider" class="fin-slider" min="12" max="96" step="12" value="60" />
+                        <div class="fin-pill-group fin-pill-group--sm" id="loan-term-pills">
+                            <button type="button" class="fin-pill fin-pill--sm" data-months="12">1 năm</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-months="36">3 năm</button>
+                            <button type="button" class="fin-pill fin-pill--sm is-active" data-months="60">5 năm</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-months="84">7 năm</button>
+                            <button type="button" class="fin-pill fin-pill--sm" data-months="96">8 năm</button>
+                        </div>
+                    </div>
+
+                    <!-- Interest rate -->
+                    <div class="form-group">
+                        <div class="slider-header">
+                            <label class="field-label">Lãi suất ước tính (% / năm):</label>
+                            <span class="slider-readout"><strong id="interest-rate-display">8.5</strong>%/năm</span>
+                        </div>
+                        <input type="range" id="interest-rate-slider" class="fin-slider" min="5.0" max="15.0" step="0.1" value="8.5" />
+                        <div class="fin-hint">Hỗ trợ các gói vay liên kết từ Vietcombank, Techcombank, BIDV, VPBank, Shinhan Bank với lãi suất ưu đãi.</div>
+                    </div>
+
+                    <!-- Method -->
+                    <div class="form-group">
+                        <label class="field-label">Phương thức tính lãi:</label>
+                        <div class="fin-radio-group">
+                            <label class="radio-card is-active">
+                                <input type="radio" name="calc-method" value="reducing" checked />
+                                <div class="radio-card__body">
+                                    <div class="radio-card__title">Dư nợ giảm dần (Phổ biến)</div>
+                                    <div class="radio-card__desc">Tiền lãi giảm dần theo từng tháng khi gốc được trả dần.</div>
+                                </div>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="calc-method" value="fixed" />
+                                <div class="radio-card__body">
+                                    <div class="radio-card__title">Dư nợ gốc cố định</div>
+                                    <div class="radio-card__desc">Số tiền trả hàng tháng không đổi trong suốt chu kỳ.</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telemetry Dashboard Right -->
+                <div class="finance-summary-card">
+                    <div class="summary-header">
+                        <span class="tag">KẾT QUẢ DỰ TÍNH TRẢ GÓP</span>
+                        <h4>Kế hoạch thanh toán</h4>
+                    </div>
+
+                    <div class="telemetry-kpi-grid">
+                        <div class="kpi-cell kpi-cell--hero">
+                            <small>TRẢ GÓP THÁNG ĐẦU TIÊN (GỐC + LÃI)</small>
+                            <strong id="kpi-monthly-first">0 đ</strong>
+                            <span>Giảm dần theo từng tháng tiếp theo</span>
+                        </div>
+                        <div class="kpi-cell">
+                            <small>SỐ TIỀN VAY TỐI ĐA</small>
+                            <strong id="kpi-loan-principal">0 đ</strong>
+                        </div>
+                        <div class="kpi-cell">
+                            <small>TIỀN GỐC HÀNG THÁNG</small>
+                            <strong id="kpi-monthly-principal">0 đ</strong>
+                        </div>
+                        <div class="kpi-cell">
+                            <small>TỔNG TIỀN LÃI TOÀN KỲ</small>
+                            <strong id="kpi-total-interest">0 đ</strong>
+                        </div>
+                        <div class="kpi-cell">
+                            <small>VỐN TỰ CÓ BAN ĐẦU CẦN CHUẨN BỊ</small>
+                            <strong id="kpi-initial-cash">0 đ</strong>
+                            <span>Gồm tiền trả trước + phí lăn bánh</span>
+                        </div>
+                    </div>
+
+                    <div class="amortization-toggle-wrapper">
+                        <button type="button" class="button button--ghost btn-block" id="btn-toggle-schedule">
+                            Xem lịch trả nợ chi tiết từng kỳ ↓
+                        </button>
+                    </div>
+
+                    <div class="summary-actions" style="margin-top: 1rem;">
+                        <a href="#consult-form" class="button button--signal btn-block">Đăng ký duyệt hồ sơ vay nhanh</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Amortization Table (Collapsed by default) -->
+            <div class="amortization-schedule-section" id="amortization-table-wrapper" style="display: none;">
+                <div class="schedule-header">
+                    <h4>Bảng tiến độ trả nợ chi tiết</h4>
+                    <p>Theo dõi lịch thanh toán từng tháng, tiền gốc, tiền lãi và số dư nợ còn lại.</p>
+                </div>
+                <div class="schedule-table-container">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Kỳ</th>
+                                <th>Dư nợ đầu kỳ</th>
+                                <th>Tiền gốc</th>
+                                <th>Tiền lãi</th>
+                                <th>Tổng trả hàng tháng</th>
+                                <th>Dư nợ cuối kỳ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="amortization-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEAD CAPTURE FORM -->
+        <div class="finance-lead-section reveal" id="consult-form">
+            <div class="finance-lead-header">
+                <span class="eyebrow">Dịch vụ tài chính cao cấp</span>
+                <h2>Nhận bảng tính chi tiết & duyệt hạn mức vay.</h2>
+                <p>AUTOHUB liên kết trực tiếp với các ngân hàng lớn nhất tại Việt Nam. Hỗ trợ duyệt hồ sơ trong 4 giờ, tỷ lệ duyệt lên đến 95%, không phát sinh phí ẩn.</p>
+            </div>
+
+            <form method="post" class="finance-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Input.VehicleSlug" id="form-vehicle-slug" />
+                <input type="hidden" asp-for="Input.VehicleName" id="form-vehicle-name" />
+                <input type="hidden" asp-for="Input.VehiclePrice" id="form-vehicle-price" />
+                <input type="hidden" asp-for="Input.City" id="form-city" />
+                <input type="hidden" asp-for="Input.EstimatedOnRoadCost" id="form-onroad-cost" />
+                <input type="hidden" asp-for="Input.DownPaymentPercent" id="form-downpayment-pct" />
+                <input type="hidden" asp-for="Input.LoanAmount" id="form-loan-amount" />
+                <input type="hidden" asp-for="Input.LoanTermMonths" id="form-loan-term" />
+                <input type="hidden" asp-for="Input.InterestRate" id="form-interest-rate" />
+                <input type="hidden" asp-for="Input.MonthlyPaymentFirst" id="form-monthly-first" />
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label asp-for="Input.FullName">Họ và tên *</label>
+                        <input asp-for="Input.FullName" class="fin-input" placeholder="Nguyễn Văn A" required />
+                        <span asp-validation-for="Input.FullName" class="field-error"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label asp-for="Input.Phone">Số điện thoại *</label>
+                        <input asp-for="Input.Phone" class="fin-input" placeholder="0901 234 567" required />
+                        <span asp-validation-for="Input.Phone" class="field-error"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label asp-for="Input.Email">Email nhận bảng dự toán (tùy chọn)</label>
+                        <input asp-for="Input.Email" class="fin-input" placeholder="example@email.com" />
+                        <span asp-validation-for="Input.Email" class="field-error"></span>
+                    </div>
+
+                    <div class="form-field">
+                        <label asp-for="Input.Notes">Yêu cầu tư vấn cụ thể</label>
+                        <input asp-for="Input.Notes" class="fin-input" placeholder="VD: Muốn vay qua Vietcombank, cần nhận xe trong tháng này..." />
+                    </div>
+                </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="button button--signal button--large">
+                        Gửi yêu cầu nhận báo giá & hồ sơ vay <span>→</span>
+                    </button>
+                    <p class="form-privacy-note">🔒 Thông tin của bạn được bảo mật tuyệt đối theo chính sách quyền riêng tư của AUTOHUB.</p>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script>
+    window.AUTOHUB_VEHICLES = @Html.Raw(vehiclesJson);
+    window.AUTOHUB_INITIAL_SLUG = '@(Model.SelectedVehicle?.Slug ?? "")';
+</script>
+<script src="~/js/finance.js" asp-append-version="true"></script>

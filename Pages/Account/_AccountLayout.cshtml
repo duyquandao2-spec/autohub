@@ -1,0 +1,20 @@
+@{
+    Layout = "_Layout";
+}
+@{
+    var controller = string.Empty;
+}
+<div class="account-page">
+    <div class="account-shell">
+        <header class="account-head">
+            <span class="account-head__eyebrow">Tài khoản</span>
+            <h1>@ViewData["AccountTitle"]</h1>
+        </header>
+        <div class="account-layout">
+            <partial name="_AccountNav" />
+            <main class="account-body">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+@page
+@model AutoHub.Pages.Account.SecurityModel
+@{
+    ViewData["Title"] = "Bảo mật tài khoản";
+    ViewData["AccountTitle"] = "Bảo mật";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="auth-status @(Model.StatusIsError ? "auth-status--error" : "")">@Model.StatusMessage</div>
+}
+
+<div class="panel panel--pad">
+    <h3 class="panel__title">Đổi mật khẩu</h3>
+    <p class="text-m" style="margin:0 0 18px">Đổi mật khẩu để giữ tài khoản an toàn. Yêu cầu tối thiểu 6 ký tự và có ít nhất một chữ số.</p>
+    <form method="post">
+        <div class="form-grid">
+            <div class="field">
+                <label asp-for="CurrentPassword">Mật khẩu hiện tại</label>
+                <input asp-for="CurrentPassword" type="password" autocomplete="current-password" required />
+                <span asp-validation-for="CurrentPassword" class="field-error"></span>
+            </div>
+            <div></div>
+            <div class="field">
+                <label asp-for="NewPassword">Mật khẩu mới</label>
+                <input asp-for="NewPassword" type="password" autocomplete="new-password" required />
+                <span asp-validation-for="NewPassword" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="ConfirmPassword">Xác nhận mật khẩu mới</label>
+                <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" required />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+        </div>
+        <div class="actions-row">
+            <button type="submit" class="btn-auth">Cập nhật mật khẩu</button>
+        </div>
+    </form>
+</div>

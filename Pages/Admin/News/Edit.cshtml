@@ -1,0 +1,66 @@
+@page "{id:int?}"
+@model AutoHub.Pages.Admin.News.EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Bài viết mới" : "Chỉnh sửa bài viết";
+    ViewData["AdminBreadcrumb"] = Model.IsNew ? "Bài viết mới" : "Chỉnh sửa bài viết";
+}
+<div class="apx-bar">
+    <a class="apx-btn apx-btn--ghost" asp-page="/admin/news/index">← Danh sách</a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="apx-alert apx-alert--danger"></div>
+
+<div class="apx-panel" style="padding:24px 26px">
+    <form method="post">
+        <div class="form-grid">
+            <div class="field field--full">
+                <label class="field__label">Tiêu đề</label>
+                <input class="apx-input" asp-for="Title" style="width:100%" required />
+            </div>
+            <div class="field">
+                <label class="field__label">Slug (URL)</label>
+                <input class="apx-input" asp-for="Slug" style="width:100%" placeholder="Để trống để tự tạo" />
+            </div>
+            <div class="field">
+                <label class="field__label">Loại</label>
+                <select class="apx-select" asp-for="Kind" style="width:100%">
+                    <option value="ARTICLE">Bài viết</option>
+                    <option value="NEWS">Tin tức</option>
+                    <option value="PRESS">Báo chí</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field__label">Danh mục</label>
+                <select class="apx-select" asp-for="CategoryId" style="width:100%">
+                    <option value="">— Chưa phân loại —</option>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <option value="@cat.Id" selected="@(Model.CategoryId == cat.Id)">@cat.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label class="field__label">Trạng thái</label>
+                <select class="apx-select" asp-for="Status" style="width:100%">
+                    <option value="DRAFT">Nháp</option>
+                    <option value="PUBLISHED">Đã đăng</option>
+                </select>
+            </div>
+            <div class="field field--full">
+                <label class="field__label">Tóm tắt (Excerpt)</label>
+                <textarea class="apx-input" asp-for="Excerpt" rows="2" style="width:100%"></textarea>
+            </div>
+            <div class="field field--full">
+                <label class="field__label">Ảnh bìa (đường dẫn)</label>
+                <input class="apx-input" asp-for="CoverImagePath" style="width:100%" placeholder="/Images/news/xxx.jpg" />
+            </div>
+            <div class="field field--full content-area">
+                <label class="field__label">Nội dung</label>
+                <textarea asp-for="Content" rows="12" placeholder="Nội dung bài viết..."></textarea>
+            </div>
+        </div>
+        <div class="actions-row" style="margin-top:20px">
+            <button class="apx-btn" type="submit">Lưu bài viết</button>
+        </div>
+    </form>
+</div>

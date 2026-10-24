@@ -1,0 +1,93 @@
+@page
+@model AutoHub.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["AdminBreadcrumb"] = "Dashboard";
+}
+<div class="stat-grid" style="margin-bottom:18px">
+    <div class="stat"><span class="stat__label">Tổng xe</span><strong class="stat__value">@Model.Summary.TotalVehicles</strong><span class="stat__sub">@Model.Summary.ActiveVehicles đang hoạt động</span></div>
+    <div class="stat"><span class="stat__label">Người dùng</span><strong class="stat__value">@Model.Summary.TotalUsers</strong><span class="stat__sub">+@Model.Summary.NewUsers7d trong 7 ngày</span></div>
+    <div class="stat"><span class="stat__label">Yêu cầu tư vấn</span><strong class="stat__value">@Model.Summary.PendingConsultations</strong><span class="stat__sub">@Model.Summary.NewConsultations mới cần xử lý</span></div>
+    <div class="stat"><span class="stat__label">Lịch lái thử</span><strong class="stat__value">@Model.Summary.UpcomingTestDrives</strong><span class="stat__sub">đang chờ/đã xác nhận</span></div>
+    <div class="stat"><span class="stat__label">Tin đã đăng</span><strong class="stat__value">@Model.Summary.PublishedNews</strong><span class="stat__sub">@Model.Summary.ContactInquiries liên hệ</span></div>
+</div>
+
+<div class="apx-grid-stack" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:18px">
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Yêu cầu tư vấn / ngày</h2></div>
+        <div style="padding:18px 20px">
+            @foreach (var p in Model.Summary.ConsultationsByDay)
+            {
+                <div class="bar-row">
+                    <span class="bar-row__label">@p.Label</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:@((p.Value * 100) / Model.ConsultationMax)%"></div></div>
+                    <span class="bar-row__val">@p.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Lịch lái thử / ngày</h2></div>
+        <div style="padding:18px 20px">
+            @foreach (var p in Model.Summary.TestDrivesByDay)
+            {
+                <div class="bar-row">
+                    <span class="bar-row__label">@p.Label</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:@((p.Value * 100) / Model.TestDriveMax)%"></div></div>
+                    <span class="bar-row__val">@p.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Người dùng mới / ngày</h2></div>
+        <div style="padding:18px 20px">
+            @foreach (var p in Model.Summary.NewUsersByDay)
+            {
+                <div class="bar-row">
+                    <span class="bar-row__label">@p.Label</span>
+                    <div class="bar-track"><div class="bar-fill" style="width:@((p.Value * 100) / Model.UsersMax)%"></div></div>
+                    <span class="bar-row__val">@p.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="apx-grid-stack" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px">
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Yêu cầu tư vấn gần đây</h2><a class="apx-btn apx-btn--ghost apx-btn--sm" asp-page="/admin/consultations/index">Xem tất cả</a></div>
+        <div class="apx-table-wrap">
+            <table class="apx-table">
+                <thead><tr><th>Tên</th><th>Trạng thái</th><th>Ngày</th></tr></thead>
+                <tbody>
+                    @foreach (var c in Model.Summary.RecentConsultations)
+                    {
+                        <tr>
+                            <td><a asp-page="/admin/consultations/detail" asp-route-id="@c.Id">@c.FullName</a></td>
+                            <td><span class="badge badge--@(c.Status == "NEW" ? "signal" : "ok")">@c.Status</span></td>
+                            <td class="muted">@c.CreatedAt.ToString("dd/MM HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Người dùng mới</h2><a class="apx-btn apx-btn--ghost apx-btn--sm" asp-page="/admin/users/index">Xem tất cả</a></div>
+        <div class="apx-table-wrap">
+            <table class="apx-table">
+                <thead><tr><th>Người dùng</th><th>Ngày</th></tr></thead>
+                <tbody>
+                    @foreach (var u in Model.Summary.RecentUsers)
+                    {
+                        <tr>
+                            <td><a asp-page="/admin/users/detail" asp-route-id="@u.Id">@u.FullName</a><br /><span class="muted">@u.Email</span></td>
+                            <td class="muted">@u.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

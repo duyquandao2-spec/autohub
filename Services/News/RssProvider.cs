@@ -41,15 +41,14 @@ public sealed class RssProvider : INewsProvider
                 using var response = await _http.GetAsync(feedUri, ct);
                 response.EnsureSuccessStatusCode();
 
-                var xml = await response.Content.ReadAsStringAsync(ct);
+                var bytes = await response.Content.ReadAsByteArrayAsync(ct);
+                var xml = System.Text.Encoding.UTF8.GetString(bytes);
                 var doc = XDocument.Parse(xml);
 
-                var ns = doc.Root?.Name.Namespace ?? XNamespace.None;
-
                 var items = doc.Descendants("item")
-                    .Concat(doc.Descendants(ns + "item"))
+                    .Concat(doc.Descendants("entry"))
                     .Take(maxResults)
-                    .Select(ParseItem)
+                    .Select(el => ParseItem(el, feedUri))
                     .Where(i => i != null)
                     .Cast<AutomotiveNewsItem>();
 
@@ -61,16 +60,13 @@ public sealed class RssProvider : INewsProvider
             }
         }
 
-        return allItems
-            .OrderByDescending(i => i.PublishedAt)
-            .Take(maxResults)
-            .ToList();
+        return NewsNormalizer.DedupeAndSort(allItems).Take(maxResults).ToList();
     }
 
-    private static AutomotiveNewsItem? ParseItem(XElement item)
+    private static AutomotiveNewsItem? ParseItem(XElement item, Uri baseUri)
     {
-        var title = item.Element("title")?.Value;
-        var link = item.Element("link")?.Value;
+        var title = item.Element("title")?.Value?.Trim();
+        var link = item.Element("link")?.Value ?? ExtractAtomLink(item);
         var pubDate = item.Element("pubDate")?.Value;
         var description = item.Element("description")?.Value;
 
@@ -80,23 +76,8 @@ public sealed class RssProvider : INewsProvider
         if (!Uri.TryCreate(link, UriKind.Absolute, out var linkUri))
             return null;
 
-        string? imageUrl = null;
-        var mediaContent = item.Element(XNamespace.None + "content") ??
-                           item.Element(XNamespace.Get("http://search.yahoo.com/mrss/") + "content");
-        var mediaThumbnail = item.Element(XNamespace.None + "thumbnail") ??
-                             item.Element(XNamespace.Get("http://search.yahoo.com/mrss/") + "thumbnail");
-        var enclosure = item.Element("enclosure");
-
-        if (mediaContent?.Attribute("url")?.Value is { Length: > 0 } mcUrl &&
-            Uri.TryCreate(mcUrl, UriKind.Absolute, out _))
-            imageUrl = mcUrl;
-        else if (mediaThumbnail?.Attribute("url")?.Value is { Length: > 0 } mtUrl &&
-                 Uri.TryCreate(mtUrl, UriKind.Absolute, out _))
-            imageUrl = mtUrl;
-        else if (enclosure?.Attribute("url")?.Value is { Length: > 0 } enUrl &&
-                 Uri.TryCreate(enUrl, UriKind.Absolute, out _) &&
-                 (enclosure.Attribute("type")?.Value?.StartsWith("image") == true))
-            imageUrl = enUrl;
+        // Background image via shared normalizer; internal APEX fallback when missing.
+        var imageUrl = NewsNormalizer.ExtractImageUrl(item, linkUri) ?? NewsNormalizer.FallbackImage;
 
         if (!DateTime.TryParse(pubDate, out var publishedAt))
             publishedAt = DateTime.UtcNow;
@@ -105,21 +86,22 @@ public sealed class RssProvider : INewsProvider
             System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(link))
         ).ToLowerInvariant()[..16];
 
-        var cleanDescription = System.Net.WebUtility.HtmlDecode(description);
-        if (cleanDescription != null && cleanDescription.Length > 180)
-            cleanDescription = cleanDescription[..177] + "...";
-
         return new AutomotiveNewsItem
         {
             Id = id,
             SourceName = linkUri.Host,
             SourceUrl = $"https://{linkUri.Host}",
             Title = title,
-            Excerpt = cleanDescription,
+            Excerpt = NewsNormalizer.CleanExcerpt(description),
             ArticleUrl = link,
             ImageUrl = imageUrl,
             PublishedAt = publishedAt,
             Category = "brand",
         };
     }
+
+    private static string? ExtractAtomLink(XElement item) =>
+        item.Elements()
+            .FirstOrDefault(e => e.Name.LocalName == "link")
+            ?.Attribute("href")?.Value;
 }

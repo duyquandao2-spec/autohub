@@ -1,0 +1,49 @@
+@using Microsoft.AspNetCore.Identity
+@using AutoHub.Models.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · AUTOHUB Quản trị</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="~/Images/apex-logo.png" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="admin">
+        <aside class="admin-side" data-admin-side>
+            <a href="/" class="admin-side__brand" title="Về trang chủ AUTOHUB" style="text-decoration:none;display:flex;align-items:center">
+                <img src="~/Images/apex-logo.png" alt="AUTOHUB" />
+                <span>AUTOHUB<small>Quản trị</small></span>
+            </a>
+            <partial name="_AdminSidebar" />
+            <div class="admin-side__foot">
+                <a href="/">← Về trang chủ</a><br />
+                Xem như: @(User.Identity!.Name)
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-top">
+                <button type="button" class="admin-burger" data-admin-burger aria-label="Mở menu">☰</button>
+                <span class="admin-top__title">@ViewData["AdminBreadcrumb"]</span>
+                <span class="admin-top__spacer"></span>
+                <div class="admin-top__user">
+                    <span>@(UserManager.GetUserName(User)?.Split('@')[0])</span>
+                    <span class="admin-top__badge">@(User.Identity!.Name![..1].ToUpperInvariant())</span>
+                </div>
+            </header>
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/js/admin.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

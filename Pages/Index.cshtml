@@ -54,7 +54,13 @@
                 <a class="brand-chip brand-chip--slide @(Model.ActiveBrand == "ALL" ? "is-active" : "")" asp-page="/Index">TẤT CẢ</a>
                 @foreach (var brand in Model.Brands)
                 {
-                    <a class="brand-chip brand-chip--slide @(string.Equals(Model.ActiveBrand, brand, StringComparison.OrdinalIgnoreCase) ? "is-active" : "")" asp-page="/Index" asp-route-brand="@brand">@brand</a>
+                    <a class="brand-chip brand-chip--slide @(string.Equals(Model.ActiveBrand, brand.Name, StringComparison.OrdinalIgnoreCase) ? "is-active" : "")" asp-page="/Index" asp-route-brand="@brand.Name">
+                        @if (!string.IsNullOrEmpty(brand.LogoPath))
+                        {
+                            <span class="brand-chip__logo"><img src="@brand.LogoPath" alt="" loading="lazy" /></span>
+                        }
+                        <span class="brand-chip__label">@brand.Name</span>
+                    </a>
                 }
             </div>
             <button type="button" class="brand-carousel__arrow brand-carousel__arrow--next" data-carousel-next aria-label="Thương hiệu tiếp">›</button>
@@ -65,7 +71,7 @@
         <div class="shell split-section__grid">
             <article class="split-copy reveal">
                 <div><p class="eyebrow">Thẩm mỹ có lực</p><h2>Đường nét luôn có lý do.</h2></div>
-                <div><p>Mỗi mặt cắt, khoảng hở và vùng sáng được tạo ra để hướng gió, điều tiết trọng lượng thị giác và khiến người lái cảm nhận được tốc độ ngay cả khi xe đứng yên.</p><button class="button button--outline" type="button" data-scroll-target="machines">Mở dữ liệu hiệu năng <span>↗</span></button></div>
+                <div><p>Mỗi mặt cắt, khoảng hở và vùng sáng được tạo ra để hướng gió, điều tiết trọng lượng thị giác và khiến người lái cảm nhận được tốc độ ngay cả khi xe đứng yên.</p><button class="button button--outline" type="button" data-vsc-open>Mở dữ liệu hiệu năng <span>↗</span></button></div>
             </article>
             <article class="telemetry-stage reveal reveal--delay-1">
                 <img src="~/Images/aero-study.jpg" alt="Đầu xe hiệu năng trong không gian tối" />
@@ -76,7 +82,7 @@
         </div>
     </section>
 
-    <section class="shell cabin-section">
+    <section class="shell cabin-section" id="cockpit">
         <article class="telemetry-stage cabin-visual reveal">
             <img src="~/Images/cockpit-focus.jpg" alt="Khoang lái hiệu năng với màn hình kỹ thuật số" />
             <svg class="trajectory" viewBox="0 0 700 520" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 440 C118 280 220 510 348 320 S542 138 720 240" /></svg>
@@ -98,7 +104,7 @@
                 <div class="search-suggestions" data-search-suggestions></div>
             </div>
 
-            <div class="machine-status reveal reveal--delay-1"><span>HIỂN THỊ <b>@Model.PagedResult.TotalItems</b> MÁY @(Model.ActiveBrand != "ALL" ? $"// {Model.ActiveBrand}" : "")</span><span>◫ TELEMETRY SELECTOR</span></div>
+            <div class="machine-status reveal reveal--delay-1"><span>HIỂN THỊ <b>@Model.PagedResult.TotalItems</b> MÁY @(Model.ActiveBrand != "ALL" ? $"// {Model.ActiveBrand}" : "") @(Model.ActiveFlag != null ? $"// {IndexModel.FlagLabels[Model.ActiveFlag]}" : "")</span><span>◫ TELEMETRY SELECTOR</span></div>
             <div class="machine-grid">
                 @foreach (var vehicle in Model.PagedResult.Items)
                 {

@@ -1,0 +1,52 @@
+@page
+@model AutoHub.Pages.Admin.Audit.IndexModel
+@{
+    ViewData["Title"] = "Nhật ký hệ thống";
+    ViewData["AdminBreadcrumb"] = "Nhật ký";
+    ViewData["CurrentPage"] = Model.PageNumber;
+    ViewData["TotalPages"] = Model.TotalPages <= 1 ? 1 : Model.TotalPages;
+    ViewData["BaseUrl"] = "/admin/audit";
+    ViewData["Query"] = new Dictionary<string, string?> { ["search"] = Model.Search, ["result"] = Model.Result };
+}
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo người dùng, hành động, loại..." />
+        <select class="apx-select" name="result">
+            <option value="">Tất cả kết quả</option>
+            <option value="SUCCESS" selected="@(Model.Result == "SUCCESS")">Thành công</option>
+            <option value="FAILED" selected="@(Model.Result == "FAILED")">Thất bại</option>
+        </select>
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn apx-btn--ghost" asp-page="/admin/audit/index">Đặt lại</a>
+    </form>
+    <span class="text-m">@Model.Total bản ghi</span>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Thời gian</th><th>Người dùng</th><th>Hành động</th><th>Đối tượng</th><th>IP</th><th>Kết quả</th></tr></thead>
+            <tbody>
+                @if (Model.Logs.Count == 0)
+                {
+                    <tr><td colspan="6" class="muted">Không có bản ghi.</td></tr>
+                }
+                @foreach (var l in Model.Logs)
+                {
+                    <tr>
+                        <td class="muted">@l.Timestamp.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>@(l.User?.FullName ?? l.UserName ?? "system")</td>
+                        <td>@l.Action</td>
+                        <td class="muted">@(l.EntityType)@(string.IsNullOrEmpty(l.EntityId) ? "" : " #" + l.EntityId)</td>
+                        <td class="muted">@l.IpAddress</td>
+                        <td><span class="badge badge--@(l.Result == "SUCCESS" ? "ok" : "signal")">@(l.Result ?? "—")</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

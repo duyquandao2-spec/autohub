@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#090b0d" />
     <meta name="description" content="AUTOHUB — trải nghiệm showroom số cho xe hiệu năng hiện đại." />
     <title>@ViewData["Title"]</title>
+    <script>
+        /* Restore saved theme before first paint (no theme flash). */
+        (function () {
+            try {
+                var t = localStorage.getItem('apex-theme');
+                document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+            } catch (e) { }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -13,19 +22,130 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/press-signal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/forms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contact-hub.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chatbot.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/header-nav.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/experience.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/vehicle-showcase.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/finance.css" asp-append-version="true" />
 </head>
 <body>
     <header class="site-header" data-header>
         <div class="shell site-header__inner">
-            <a class="brand" href="/#home" aria-label="Về đầu trang"><img src="~/Images/apex-logo.png" alt="" /><span>AUTOHUB</span></a>
-            <nav class="desktop-nav" aria-label="Điều hướng chính"><a href="/#home">Trang chủ</a><a href="/#machines">Dòng xe</a><a href="/#experience">Trải nghiệm</a><a href="/#technology">Công nghệ</a></nav>
-            <div class="header-actions"><a class="search-link" href="/#machines" aria-label="Tìm xe">⌕</a><button class="menu-button" type="button" data-menu-button aria-expanded="false" aria-label="Mở menu">☰</button></div>
+            <a class="brand" href="/" aria-label="Trang chủ AUTOHUB"><img src="~/Images/apex-logo.png" alt="AUTOHUB" /><span>AUTOHUB</span></a>
+            <partial name="_HeaderNav" model='("desktop")' />
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle theme" aria-pressed="false">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+                <a class="search-link" href="/#machines" aria-label="Tìm xe">⌕</a>
+                <partial name="_AuthMenu" />
+                <button class="menu-button" type="button" data-menu-button aria-expanded="false" aria-label="Mở menu">☰</button>
+            </div>
         </div>
-        <nav class="mobile-nav" data-mobile-nav aria-label="Điều hướng di động"><a href="/#home">Trang chủ</a><a href="/#machines">Dòng xe</a><a href="/#experience">Trải nghiệm</a><a href="/#technology">Công nghệ</a></nav>
+        <nav class="mobile-nav" data-mobile-nav aria-label="Điều hướng di động"><a class="mobile-home-link" href="/">Trang chủ</a><partial name="_HeaderNav" model='("mobile")' /></nav>
     </header>
     @RenderBody()
-    <footer class="site-footer shell"><div><img src="~/Images/apex-logo.png" alt="" /><span>AUTOHUB</span></div><p>© 2026 AUTOHUB. Thiết kế để cảm nhận chuyển động.</p><a href="/#home">LÊN ĐẦU TRANG ↑</a></footer>
+    <footer class="site-footer shell"><a href="/" class="site-footer__brand" aria-label="Về trang chủ AUTOHUB"><img src="~/Images/apex-logo.png" alt="AUTOHUB" /><span>AUTOHUB</span></a><p>© 2026 AUTOHUB. Thiết kế để cảm nhận chuyển động.</p><a href="/#home">LÊN ĐẦU TRANG ↑</a></footer>
+    <partial name="_ContactHub" />
+    <partial name="_ChatBot" />
+
+    @* ── Premium Interactive 3D Vehicle Showcase (centered overlay) ── *@
+    <div class="vsc-overlay" id="vsc-overlay" data-vsc-overlay aria-hidden="true" role="dialog" aria-modal="true" aria-label="Trải nghiệm xe tương tác 3D">
+        <div class="vsc-shell" data-vsc-shell>
+            <div class="vsc-stage" data-vsc-stage>
+                <canvas data-vsc-canvas aria-label="Xe 3D tương tác"></canvas>
+            </div>
+
+            <div class="vsc-topbar">
+                <div class="vsc-brand">
+                    <strong>AUTOHUB</strong>
+                    <span>Vehicle Experience</span>
+                </div>
+                <button type="button" class="vsc-close" data-vsc-close aria-label="Đóng trải nghiệm xe">✕</button>
+            </div>
+
+            <div class="vsc-rpm" data-vsc-rpm hidden>
+                <small>ENGINE RPM</small>
+                <strong data-vsc-rpm-value>0 <span>RPM</span></strong>
+                <div class="vsc-rpm__bar"><i data-vsc-rpm-bar></i></div>
+            </div>
+
+            <div class="vsc-controls" role="toolbar" aria-label="Điều khiển trải nghiệm xe">
+                <button type="button" class="vsc-btn" data-vsc-action="rotate" aria-label="Xoay 360 độ">360°</button>
+                <button type="button" class="vsc-btn" data-vsc-action="lights" aria-label="Bật tắt đèn pha">LIGHTS</button>
+                <button type="button" class="vsc-btn" data-vsc-action="hazard" aria-label="Bật tắt đèn khẩn cấp">HAZARD</button>
+                <button type="button" class="vsc-btn" data-vsc-action="brake" aria-label="Bật tắt đèn phanh">BRAKE</button>
+                <button type="button" class="vsc-btn" data-vsc-action="doors" aria-label="Mở đóng cửa xe">DOORS</button>
+                <button type="button" class="vsc-btn" data-vsc-action="interior" aria-label="Xem nội thất">INTERIOR</button>
+                <button type="button" class="vsc-btn" data-vsc-action="engine" aria-label="Bật tắt động cơ">ENGINE</button>
+                <button type="button" class="vsc-btn" data-vsc-action="rev" aria-label="Tăng tốc động cơ">REV</button>
+                <button type="button" class="vsc-btn" data-vsc-action="specs" aria-label="Xem thông số kỹ thuật">SPECS</button>
+                <button type="button" class="vsc-btn" data-vsc-action="colors" aria-label="Đổi màu xe">COLOR</button>
+            </div>
+
+            <div class="vsc-presets" role="tablist" aria-label="Góc nhìn camera">
+                <button type="button" class="vsc-preset is-active" data-vsc-preset="default" role="tab" aria-selected="true">3/4</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="front" role="tab" aria-selected="false">Trước</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="side" role="tab" aria-selected="false">Bên</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="rear" role="tab" aria-selected="false">Sau</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="top" role="tab" aria-selected="false">Trên</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="wheel" role="tab" aria-selected="false">Wheel</button>
+                <button type="button" class="vsc-preset" data-vsc-preset="headlight" role="tab" aria-selected="false">Đèn</button>
+            </div>
+
+            <div class="vsc-panel" data-vsc-panel data-vsc-panel="specs" role="dialog" aria-label="Thông số kỹ thuật">
+                <div class="vsc-panel__head">
+                    <h4 data-vsc-specs-name>Thông số</h4>
+                    <button type="button" class="vsc-panel__close" data-vsc-panel-close aria-label="Đóng">✕</button>
+                </div>
+                <div class="vsc-specs-grid" data-vsc-specs-grid></div>
+            </div>
+
+            <div class="vsc-colors" data-vsc-colors role="group" aria-label="Chọn màu xe"></div>
+
+            <div class="vsc-hotspot" data-vsc-hotspot role="dialog" aria-label="Chi tiết xe">
+                <h4 data-vsc-hotspot-title></h4>
+                <p data-vsc-hotspot-desc></p>
+            </div>
+
+            <div class="vsc-hint" data-vsc-hint>Kéo để xoay 360° · Cuộn để thu phóng</div>
+
+            <div class="vsc-loading" data-vsc-loading>
+                <div class="vsc-loading__ring"></div>
+                <strong>LOADING VEHICLE</strong>
+                <p>Preparing vehicle experience...</p>
+                <div class="vsc-loading__bar"><i data-vsc-loading-bar></i></div>
+                <em data-vsc-loading-pct>0%</em>
+            </div>
+
+            <div class="vsc-error" data-vsc-error role="alert">
+                <h3>Không thể tải trải nghiệm xe.</h3>
+                <p data-vsc-error-msg>Vui lòng thử lại sau.</p>
+                <div class="vsc-error__actions">
+                    <button type="button" class="vsc-btn" data-vsc-retry>THỬ LẠI</button>
+                    <button type="button" class="vsc-btn" data-vsc-quit>QUAY LẠI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/header-nav.js" asp-append-version="true" defer></script>
     <script src="~/js/press-signal.js" asp-append-version="true" defer></script>
+    <script src="~/js/contact-hub.js" asp-append-version="true" defer></script>
+    <script src="~/js/services/chat-types.js" asp-append-version="true" defer></script>
+    <script src="~/js/services/chat-service.js" asp-append-version="true" defer></script>
+    <script src="~/js/chat-state.js" asp-append-version="true" defer></script>
+    <script src="~/js/chatbot.js" asp-append-version="true" defer></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
+    <script src="~/js/auth.js" asp-append-version="true" defer></script>
+    <script src="~/js/showcase/showcase-audio.js" asp-append-version="true" defer></script>
+    <script src="~/js/showcase/showcase-scene.js" asp-append-version="true" defer></script>
+    <script src="~/js/showcase/vehicle-showcase.js" asp-append-version="true" defer></script>
 </body>
 </html>

@@ -1,0 +1,49 @@
+@page
+@model AutoHub.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Hồ sơ tài khoản";
+    ViewData["AccountTitle"] = "Hồ sơ";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="auth-status @(Model.StatusIsError ? "auth-status--error" : "")">@Model.StatusMessage</div>
+}
+
+<div class="panel panel--pad" style="margin-bottom:26px">
+    <h3 class="panel__title">Thông tin liên hệ</h3>
+    <form method="post">
+        <div class="form-grid">
+            <div class="field">
+                <label asp-for="FullName">Họ và tên</label>
+                <input asp-for="FullName" required />
+                <span asp-validation-for="FullName" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Phone">Số điện thoại</label>
+                <input asp-for="Phone" autocomplete="tel" />
+            </div>
+            <div class="field">
+                <label asp-for="PreferredContactMethod">Phương thức liên hệ ưa thích</label>
+                <select asp-for="PreferredContactMethod">
+                    <option value="">Chọn phương thức</option>
+                    <option value="PHONE">Điện thoại</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="ZALO">Zalo</option>
+                    <option value="IN_PERSON">Tại showroom</option>
+                </select>
+            </div>
+        </div>
+        <div class="actions-row">
+            <button type="submit" class="btn-auth">Lưu thay đổi</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel panel--pad">
+    <h3 class="panel__title">Chi tiết tài khoản</h3>
+    <div class="acct-grid">
+        <div class="acct-tile"><strong>@Model.Profile?.Email</strong><span>Email đăng nhập</span></div>
+        <div class="acct-tile"><strong>@Model.FavoriteCount</strong><span>Xe yêu thích</span></div>
+        <div class="acct-tile"><strong>@Model.MemberSince.ToString("dd/MM/yyyy")</strong><span>Ngày tham gia</span></div>
+    </div>
+</div>

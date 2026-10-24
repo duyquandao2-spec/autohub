@@ -44,12 +44,28 @@
   window.addEventListener('scroll', updateHeader, { passive: true });
   updateHeader();
 
-  /* ── Logo click → scroll to top ──────────────────────── */
-  document.querySelector('.brand')?.addEventListener('click', (e) => {
-    if (window.location.pathname === '/') {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  /* ── Logo click → Quay trở lại trang chủ ban đầu ────────── */
+  const onLogoClick = (e) => {
+    mobileNav?.classList.remove('is-open');
+    menuButton?.setAttribute('aria-expanded', 'false');
+
+    if (window.location.pathname === '/' && !window.location.search && !window.location.hash) {
+      if (window.scrollY > 0) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
     }
+
+    if (window.location.pathname === '/' && (window.location.search || window.location.hash)) {
+      e.preventDefault();
+      window.location.href = '/';
+      return;
+    }
+  };
+
+  document.querySelectorAll('.brand, .site-footer__brand, [data-nav-home], .mobile-home-link').forEach((el) => {
+    el.addEventListener('click', onLogoClick);
   });
 
   /* ── Hero parallax ────────────────────────────────────── */
@@ -75,11 +91,6 @@
   /* ── Scroll-to targets ────────────────────────────────── */
   document.querySelectorAll('[data-scroll-target]').forEach((button) => button.addEventListener('click', () => {
     document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }));
-
-  /* ── Test drive button ────────────────────────────────── */
-  document.querySelectorAll('[data-appointment]').forEach((button) => button.addEventListener('click', () => {
-    window.alert('Yêu cầu lái thử đã được ghi nhận. Đội ngũ AUTOHUB sẽ liên hệ để xác nhận khung giờ phù hợp.');
   }));
 
   /* ── AJAX page loading ────────────────────────────────── */
@@ -131,6 +142,9 @@
     bindBrandChips();
     bindRevealElements(document);
   }
+
+  /* Exposed for the header navigation hub (SPA-style filter loads on home). */
+  window.autohubLoadPage = loadPage;
 
   /* ── Pagination ───────────────────────────────────────── */
   function paginationClickHandler(e) {

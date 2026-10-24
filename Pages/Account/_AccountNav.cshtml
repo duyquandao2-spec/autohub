@@ -1,0 +1,25 @@
+@using Microsoft.AspNetCore.Identity
+@using AutoHub.Models.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var role = "Khách hàng";
+    if (User.IsInRole(AutoHub.Models.RoleNames.SuperAdmin)) role = "Super Admin";
+    else if (User.IsInRole(AutoHub.Models.RoleNames.Administrator)) role = "Quản trị viên";
+    else if (User.IsInRole(AutoHub.Models.RoleNames.Manager)) role = "Quản lý";
+    else if (User.IsInRole(AutoHub.Models.RoleNames.Sales)) role = "Nhân viên bán hàng";
+    else if (User.IsInRole(AutoHub.Models.RoleNames.ContentEditor)) role = "Biên tập nội dung";
+}
+<nav class="account-nav" aria-label="Tài khoản">
+    <div class="account-nav__role">Đang đăng nhập với vai trò<br /><strong>@role</strong></div>
+    <a asp-page="/account/index" class="@(Active("account/index"))">Tổng quan</a>
+    <a asp-page="/account/profile" class="@(Active("account/profile"))">Hồ sơ</a>
+    <a asp-page="/account/security" class="@(Active("account/security"))">Bảo mật</a>
+    <a asp-page="/account/favorites" class="@(Active("account/favorites"))">Xe yêu thích</a>
+    <a asp-page="/account/consultations" class="@(Active("account/consultations"))">Lịch tư vấn</a>
+    <a asp-page="/account/testdrives" class="@(Active("account/testdrives"))">Lịch lái thử</a>
+</nav>
+@functions {
+    string Current => ViewContext.HttpContext.Request.Path.ToString().Trim('/').ToLowerInvariant();
+    string Active(string page) => Current == page ? "is-active" : string.Empty;
+}

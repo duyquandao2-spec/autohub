@@ -1,0 +1,49 @@
+@page
+@model AutoHub.Pages.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-card__mark">AUTOHUB · APEX</div>
+        <h1>Đăng nhập</h1>
+        <p class="auth-card__lede">Truy cập tài khoản để theo dõi xe yêu thích, lịch hẹn lái thử và các buổi tư vấn của bạn.</p>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="auth-status @(Model.StatusIsError ? "auth-status--error" : "")">@Model.StatusMessage</div>
+        }
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="auth-status auth-status--error" style="display:none"></div>
+
+            <div class="field">
+                <label asp-for="UserName">Tên đăng nhập</label>
+                <input asp-for="UserName" type="text" autocomplete="username" required />
+                <span asp-validation-for="UserName" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Password">Mật khẩu</label>
+                <input asp-for="Password" type="password" autocomplete="current-password" required />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+
+            <label class="field" style="flex-direction:row;align-items:center;gap:.6rem">
+                <input asp-for="RememberMe" type="checkbox" style="width:auto" />
+                <span class="text-m" style="margin:0">Ghi nhớ đăng nhập</span>
+            </label>
+
+            <button type="submit" class="btn-auth btn-auth--block">Đăng nhập</button>
+        </form>
+
+        <div class="auth-page__cta">
+            <span>Quên mật khẩu?</span>
+            <a href="/auth/forgotpassword">Đặt lại mật khẩu</a>
+        </div>
+
+        <div class="auth-page__alt">
+            Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+        </div>
+    </div>
+</div>

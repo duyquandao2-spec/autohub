@@ -1,0 +1,73 @@
+@page
+@model AutoHub.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-card__mark">AUTOHUB · APEX</div>
+        <h1>Đăng ký</h1>
+        <p class="auth-card__lede">Tạo tài khoản để lưu xe yêu thích và đặt lịch lái thử nhanh chóng.</p>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="auth-status @(Model.StatusIsError ? "auth-status--error" : "")">@Model.StatusMessage</div>
+        }
+
+        <form method="post" asp-page="/register">
+            <div class="field">
+                <label asp-for="FullName">Họ và tên</label>
+                <input asp-for="FullName" required />
+                <span asp-validation-for="FullName" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="UserName">Tên đăng nhập</label>
+                <input asp-for="UserName" type="text" autocomplete="username" required />
+                <span asp-validation-for="UserName" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" autocomplete="email" required />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Phone">Số điện thoại</label>
+                <input asp-for="Phone" autocomplete="tel" required />
+                <span asp-validation-for="Phone" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Password">Mật khẩu</label>
+                <input asp-for="Password" type="password" autocomplete="new-password" required />
+                <span asp-validation-for="Password" class="field-error"></span>
+                <div class="auth-pwmeta">Tối thiểu 6 ký tự, có ít nhất một chữ số.</div>
+            </div>
+
+            <div class="field">
+                <label asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" required />
+                <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+            </div>
+
+            <div class="field">
+                <label>Phương thức liên hệ ưa thích (tùy chọn)</label>
+                <select asp-for="PreferredContactMethod">
+                    <option value="">Chọn phương thức liên hệ</option>
+                    <option value="PHONE">Điện thoại</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="ZALO">Zalo</option>
+                    <option value="IN_PERSON">Tại showroom</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-auth btn-auth--block">Tạo tài khoản</button>
+        </form>
+
+        <div class="auth-page__alt">
+            Đã có tài khoản? <a href="/login">Đăng nhập</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,192 @@
+@page
+@model AutoHub.Pages.Admin.Vehicles.CreateModel
+@{
+    ViewData["Title"] = "Thêm xe mới";
+    ViewData["AdminBreadcrumb"] = "Thêm xe mới";
+}
+
+<div class="apx-bar">
+    <a class="apx-btn apx-btn--ghost" asp-page="/Admin/Vehicles/Index">← Quay lại danh sách xe</a>
+    <span class="text-m" style="color:var(--muted)">Nhập thông tin cơ bản &amp; thông số kỹ thuật xe</span>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="apx-alert apx-alert--danger" style="margin-bottom:1rem"></div>
+
+<div class="apx-panel" style="padding:24px 28px">
+    <form method="post">
+        @Html.AntiForgeryToken()
+
+        <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 16px;color:#fff;border-bottom:1px solid var(--line);padding-bottom:8px">
+            1. THÔNG TIN CƠ BẢN
+        </h3>
+
+        <div class="form-grid">
+            <div class="field">
+                <label class="field__label" asp-for="Input.BrandId">Thương hiệu *</label>
+                <select class="apx-select" asp-for="Input.BrandId" asp-items="Model.Brands" style="width:100%" required>
+                    <option value="">— Chọn thương hiệu —</option>
+                </select>
+                <span asp-validation-for="Input.BrandId" class="text-danger" style="font-size:0.8rem;color:#ff4d4f"></span>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.ModelName">Dòng xe (Model) *</label>
+                <input class="apx-input" asp-for="Input.ModelName" placeholder="VD: 3 Series, C-Class, Taycan" style="width:100%" required />
+                <span asp-validation-for="Input.ModelName" class="text-danger" style="font-size:0.8rem;color:#ff4d4f"></span>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.VariantName">Phiên bản (Variant) *</label>
+                <input class="apx-input" asp-for="Input.VariantName" placeholder="VD: 330i M Sport, C 300 AMG" style="width:100%" required />
+                <span asp-validation-for="Input.VariantName" class="text-danger" style="font-size:0.8rem;color:#ff4d4f"></span>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.Slug">Đường dẫn URL (Slug)</label>
+                <input class="apx-input" asp-for="Input.Slug" placeholder="Để trống hệ thống sẽ tự sinh slug" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.BasePrice">Giá niêm yết (VNĐ) *</label>
+                <input class="apx-input" asp-for="Input.BasePrice" type="number" step="1000000" placeholder="VD: 2099000000" style="width:100%" required />
+                <span asp-validation-for="Input.BasePrice" class="text-danger" style="font-size:0.8rem;color:#ff4d4f"></span>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.ModelYear">Đời xe (Model Year)</label>
+                <input class="apx-input" asp-for="Input.ModelYear" type="number" placeholder="2024" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.BodyTypeId">Kiểu dáng xe (Body Type)</label>
+                <select class="apx-select" asp-for="Input.BodyTypeId" asp-items="Model.BodyTypes" style="width:100%">
+                    <option value="">— Chọn kiểu dáng —</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.SeatCount">Số chỗ ngồi *</label>
+                <input class="apx-input" asp-for="Input.SeatCount" type="number" style="width:100%" required />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.FuelTypeId">Nhiên liệu / Động cơ *</label>
+                <select class="apx-select" asp-for="Input.FuelTypeId" asp-items="Model.FuelTypes" style="width:100%" required></select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.TransmissionTypeId">Hộp số *</label>
+                <select class="apx-select" asp-for="Input.TransmissionTypeId" asp-items="Model.TransmissionTypes" style="width:100%" required></select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.DriveTypeId">Hệ dẫn động *</label>
+                <select class="apx-select" asp-for="Input.DriveTypeId" asp-items="Model.DriveTypes" style="width:100%" required></select>
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.Status">Trạng thái mở bán</label>
+                <select class="apx-select" asp-for="Input.Status" style="width:100%">
+                    <option value="ACTIVE">Đang bán (ACTIVE)</option>
+                    <option value="COMING_SOON">Sắp ra mắt (COMING_SOON)</option>
+                    <option value="ARCHIVED">Lưu trữ (ARCHIVED)</option>
+                </select>
+            </div>
+
+            <div class="field field--full">
+                <label class="field__label" asp-for="Input.ImagePath">Đường dẫn ảnh đại diện (Hero Image)</label>
+                <input class="apx-input" asp-for="Input.ImagePath" placeholder="/Images/BMW/3-Series/hero.jpg hoặc URL ảnh trực tiếp" style="width:100%" />
+                <small style="color:var(--muted);font-size:0.75rem">Ảnh sẽ hiển thị ngoài trang chủ, catalogue xe và trong khung chat AI.</small>
+            </div>
+
+            <div class="field field--full">
+                <label class="field__label" asp-for="Input.Description">Mô tả giới thiệu xe</label>
+                <textarea class="apx-input" asp-for="Input.Description" rows="3" placeholder="Đặc trưng vận hành, thiết kế, cảm giác lái..." style="width:100%"></textarea>
+            </div>
+        </div>
+
+        <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 16px;color:#fff;border-bottom:1px solid var(--line);padding-bottom:8px">
+            2. THÔNG SỐ HIỆU NĂNG &amp; KÍCH THƯỚC (SPECIFICATIONS)
+        </h3>
+
+        <div class="form-grid">
+            <div class="field">
+                <label class="field__label" asp-for="Input.EngineType">Loại động cơ</label>
+                <input class="apx-input" asp-for="Input.EngineType" placeholder="VD: 2.0L TwinPower Turbo I4" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.EngineDisplacement">Dung tích xi lanh (cc)</label>
+                <input class="apx-input" asp-for="Input.EngineDisplacement" type="number" placeholder="VD: 1998" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.Horsepower">Công suất cực đại (HP)</label>
+                <input class="apx-input" asp-for="Input.Horsepower" type="number" placeholder="VD: 258" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.Torque">Mô-men xoắn cực đại (Nm)</label>
+                <input class="apx-input" asp-for="Input.Torque" type="number" placeholder="VD: 400" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.Acceleration0To100">Tăng tốc 0 — 100 km/h (giây)</label>
+                <input class="apx-input" asp-for="Input.Acceleration0To100" type="number" step="0.1" placeholder="VD: 5.8" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.TopSpeed">Tốc độ tối đa (km/h)</label>
+                <input class="apx-input" asp-for="Input.TopSpeed" type="number" placeholder="VD: 250" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.FuelConsumptionCombined">Tiêu thụ kết hợp (L/100km)</label>
+                <input class="apx-input" asp-for="Input.FuelConsumptionCombined" type="number" step="0.1" placeholder="VD: 6.8" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.LengthMm">Chiều dài (mm)</label>
+                <input class="apx-input" asp-for="Input.LengthMm" type="number" placeholder="VD: 4713" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.WidthMm">Chiều rộng (mm)</label>
+                <input class="apx-input" asp-for="Input.WidthMm" type="number" placeholder="VD: 1827" style="width:100%" />
+            </div>
+
+            <div class="field">
+                <label class="field__label" asp-for="Input.HeightMm">Chiều cao (mm)</label>
+                <input class="apx-input" asp-for="Input.HeightMm" type="number" placeholder="VD: 1440" style="width:100%" />
+            </div>
+        </div>
+
+        <h3 style="font-size:1.1rem;font-weight:700;margin:28px 0 16px;color:#fff;border-bottom:1px solid var(--line);padding-bottom:8px">
+            3. THIẾT LẬP HIỂN THỊ
+        </h3>
+
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" asp-for="Input.IsFeatured" />
+                <span style="font-size:0.9rem;color:#fff">Xe nổi bật (Featured)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" asp-for="Input.IsNewArrival" />
+                <span style="font-size:0.9rem;color:#fff">Xe mới về (New Arrival)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" asp-for="Input.IsPopular" />
+                <span style="font-size:0.9rem;color:#fff">Xe phổ biến (Popular)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" asp-for="Input.IsAvailable" />
+                <span style="font-size:0.9rem;color:#fff">Sẵn hàng giao ngay</span>
+            </label>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:20px;border-top:1px solid var(--line);padding-top:16px">
+            <button class="apx-btn apx-btn--signal" type="submit">Lưu &amp; Đăng bán xe</button>
+            <a class="apx-btn apx-btn--ghost" asp-page="/Admin/Vehicles/Index">Hủy bỏ</a>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,122 @@
+@page
+@model AutoHub.Pages.TestDriveModel
+@{
+    ViewData["Title"] = "Đặt lịch lái thử — AUTOHUB";
+    var selectedVehicle = Model.VehicleOptions.FirstOrDefault(v => v.Id == Model.Input.VariantId);
+}
+
+<main class="form-page">
+    <section class="form-hero">
+        <div class="shell">
+            <p class="eyebrow">Trải nghiệm thực tế · Hà Nội</p>
+            <h1>ĐẶT LỊCH<br /><span class="form-hero__accent">LÁI THỬ.</span></h1>
+            <p class="form-hero__lede">Chọn xe, chọn khung giờ — đội ngũ AUTOHUB sẽ xác nhận và chuẩn bị xe sẵn sàng tại showroom.</p>
+        </div>
+    </section>
+
+    <section class="shell form-section">
+        @if (Model.Submitted)
+        {
+            <article class="booking-success reveal is-visible" aria-live="polite">
+                <div class="booking-success__icon">✓</div>
+                <h2>Yêu cầu đã được ghi nhận.</h2>
+                <p>Mã tham chiếu của bạn: <strong class="booking-success__ref">@Model.BookingReference</strong></p>
+                <dl class="booking-success__summary">
+                    <div><dt>Xe</dt><dd>@(selectedVehicle?.Name ?? "Sẽ tư vấn khi xác nhận")</dd></div>
+                    <div><dt>Thời gian</dt><dd>@Model.Input.PreferredDate.ToString("dd/MM/yyyy") · @Model.Input.TimeSlot</dd></div>
+                    <div><dt>Người đặt</dt><dd>@Model.Input.FullName · @Model.Input.Phone</dd></div>
+                </dl>
+                <p class="booking-success__note">Đội ngũ AUTOHUB sẽ gọi xác nhận trong vòng 2 giờ làm việc. Vui lòng mang theo giấy phép lái xe khi đến.</p>
+                <div class="booking-success__actions">
+                    <a class="button button--light" asp-page="/Index">Về trang chủ <span>→</span></a>
+                    <a class="text-action" asp-page="/TestDrive">Đặt thêm lịch khác <span class="circle-icon">›</span></a>
+                </div>
+            </article>
+        }
+        else
+        {
+            <form class="testdrive-form" method="post">
+                <div class="form-layout">
+                    <div class="form-main reveal">
+                        <h2 class="form-block-title"><span>01</span>Thông tin liên hệ</h2>
+                        <div class="form-grid">
+                            <div class="field field--full">
+                                <label asp-for="Input.FullName"></label>
+                                <input asp-for="Input.FullName" autocomplete="name" placeholder="Nguyễn Văn A" />
+                                <span asp-validation-for="Input.FullName" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="Input.Phone"></label>
+                                <input asp-for="Input.Phone" inputmode="tel" autocomplete="tel" placeholder="0912345678" />
+                                <span asp-validation-for="Input.Phone" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="Input.Email"></label>
+                                <input asp-for="Input.Email" type="email" autocomplete="email" placeholder="ban@email.com (không bắt buộc)" />
+                                <span asp-validation-for="Input.Email" class="field-error"></span>
+                            </div>
+                        </div>
+
+                        <h2 class="form-block-title"><span>02</span>Chọn trải nghiệm</h2>
+                        <div class="form-grid">
+                            <div class="field field--full" id="chon-xe">
+                                <label asp-for="Input.VariantId">Mẫu xe</label>
+                                <select asp-for="Input.VariantId">
+                                    <option value="">— Chưa chọn, cần tư vấn —</option>
+                                    @foreach (var vehicle in Model.VehicleOptions)
+                                    {
+                                        <option value="@vehicle.Id" selected="@(vehicle.Id == Model.Input.VariantId)">@vehicle.Name (@vehicle.PriceLabel)</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Input.VariantId" class="field-error"></span>
+                            </div>
+                            <div class="field" id="thoi-gian">
+                                <label asp-for="Input.PreferredDate"></label>
+                                <input asp-for="Input.PreferredDate"
+                                       type="date"
+                                       min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                       max="@DateTime.Today.AddDays(60).ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="Input.PreferredDate" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <span class="field__label">Khung giờ</span>
+                                <div class="slot-picker">
+                                    @for (var i = 0; i < AutoHub.Pages.TestDriveModel.TimeSlots.Length; i++)
+                                    {
+                                        var slot = AutoHub.Pages.TestDriveModel.TimeSlots[i];
+                                        <label class="slot-chip">
+                                            <input type="radio" asp-for="Input.TimeSlots" value="@slot" />
+                                            <span>@slot</span>
+                                        </label>
+                                    }
+                                </div>
+                                <span asp-validation-for="Input.TimeSlots" class="field-error"></span>
+                            </div>
+                            <div class="field field--full">
+                                <label asp-for="Input.Message"></label>
+                                <textarea asp-for="Input.Message" rows="4" placeholder="Cầu đường quen thuộc, nhu cầu trải nghiệm hoặc câu hỏi cho đội tư vấn…"></textarea>
+                                <span asp-validation-for="Input.Message" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="form-aside reveal reveal--delay-1" id="luu-y">
+                        <h3>Lưu ý khi lái thử</h3>
+                        <ul>
+                            <li><strong>Mang giấy phép lái xe</strong> bản gốc còn hiệu lực.</li>
+                            <li>Showroom mở cửa Thứ 2 – Chủ nhật, khung giờ 08:00 – 17:00.</li>
+                            <li>Cung đường lái thử tiêu chuẩn ~5 km qua 3 loại mặt đường.</li>
+                            <li>Nên đặt trước ít nhất 1 ngày để xe được chuẩn bị đầy đủ.</li>
+                        </ul>
+                        <div class="form-aside__signal"><i></i><span>AUTOHUB SHOWROOM · HÀ NỘI</span></div>
+                    </aside>
+                </div>
+
+                <div class="form-actions">
+                    <button class="button button--signal button--wide" type="submit">Gửi yêu cầu lái thử <span>→</span></button>
+                    <a class="text-action text-action--muted" asp-page="/Index">Quay lại dòng xe <span>↘</span></a>
+                </div>
+            </form>
+        }
+    </section>
+</main>

@@ -1,0 +1,37 @@
+@page
+@model AutoHub.Pages.Account.ConsultationsModel
+@{
+    ViewData["Title"] = "Lịch tư vấn";
+    ViewData["AccountTitle"] = "Lịch tư vấn";
+}
+@if (Model.Consultations.Count == 0)
+{
+    <div class="panel panel--pad" style="text-align:center;padding:60px 30px">
+        <p class="text-m">Bạn chưa có buổi tư vấn nào.</p>
+        <div class="actions-row" style="justify-content:center">
+            <a class="btn-auth" href="/#machines">Đặt tư vấn</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="panel panel--pad">
+        <table class="acct-table">
+            <thead>
+                <tr><th>Ngày ưa thích</th><th>Phương thức</th><th>Ngân sách</th><th>Trạng thái</th><th>Ngày tạo</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Consultations)
+                {
+                    <tr>
+                        <td>@(c.PreferredDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@c.ConsultationMethod</td>
+                        <td>@c.Budget</td>
+                        <td><span class="badge badge--@AutoHub.Services.StatusWorkflow.BadgeClass(c.Status)">@AutoHub.Services.StatusWorkflow.Label(c.Status)</span></td>
+                        <td>@c.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

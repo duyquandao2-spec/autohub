@@ -8,6 +8,7 @@ public class BrandEntity
     public string? Description { get; set; }
     public string? Country { get; set; }
     public string? WebsiteUrl { get; set; }
+    public string? LogoPath { get; set; }
     public int? LogoMediaId { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

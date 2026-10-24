@@ -1,0 +1,66 @@
+@using Microsoft.AspNetCore.Identity
+@using AutoHub.Models.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var canVehicle = User.IsInRole(RoleNames.Administrator) || User.IsInRole(RoleNames.SuperAdmin);
+    var canAppointment = User.IsInRole(RoleNames.Sales) || User.IsInRole(RoleNames.Manager)
+        || User.IsInRole(RoleNames.Administrator) || User.IsInRole(RoleNames.SuperAdmin);
+    var canUsers = User.IsInRole(RoleNames.Administrator) || User.IsInRole(RoleNames.SuperAdmin);
+    var canContent = User.IsInRole(RoleNames.ContentEditor) || User.IsInRole(RoleNames.Manager)
+        || User.IsInRole(RoleNames.Administrator) || User.IsInRole(RoleNames.SuperAdmin);
+    var canAudit = User.IsInRole(RoleNames.Manager) || User.IsInRole(RoleNames.Administrator) || User.IsInRole(RoleNames.SuperAdmin);
+    var canSettings = User.IsInRole(RoleNames.SuperAdmin);
+}
+<nav class="admin-side__nav">
+    <div class="admin-nav-group">
+        <span class="admin-nav-group__label">Điều hành</span>
+        <a asp-page="/admin/index" class="@(T("/admin/index"))"><span class="ic">◈</span> Dashboard</a>
+        @if (canAppointment)
+        {
+            <a asp-page="/admin/consultations/index" class="@(T("/admin/consultations"))"><span class="ic">☏</span> Yêu cầu tư vấn</a>
+            <a asp-page="/admin/testdrives/index" class="@(T("/admin/testdrives"))"><span class="ic">●</span> Lịch lái thử</a>
+        }
+    </div>
+
+    @if (canVehicle || canContent)
+    {
+        <div class="admin-nav-group">
+            <span class="admin-nav-group__label">Nội dung</span>
+            @if (canVehicle)
+            {
+                <a asp-page="/admin/vehicles/index" class="@(T("/admin/vehicles"))"><span class="ic">▣</span> Xe &amp; Thương hiệu</a>
+            }
+            @if (canContent)
+            {
+                <a asp-page="/admin/news/index" class="@(T("/admin/news"))"><span class="ic">▤</span> Tin tức</a>
+            }
+        </div>
+    }
+
+    @if (canUsers || canAudit || canSettings)
+    {
+        <div class="admin-nav-group">
+            <span class="admin-nav-group__label">Hệ thống</span>
+            @if (canUsers)
+            {
+                <a asp-page="/admin/users/index" class="@(T("/admin/users"))"><span class="ic">☺</span> Người dùng</a>
+            }
+            @if (canAudit)
+            {
+                <a asp-page="/admin/audit/index" class="@(T("/admin/audit"))"><span class="ic">≡</span> Nhật ký</a>
+            }
+            @if (canSettings)
+            {
+                <a asp-page="/admin/settings" class="@(T("/admin/settings"))"><span class="ic">⚙</span> Cấu hình</a>
+            }
+        </div>
+    }
+</nav>
+@functions {
+    string T(string page)
+    {
+        var current = "/" + ViewContext.HttpContext.Request.Path.ToString().Trim('/');
+        return current == page || current.StartsWith(page + "/") ? "is-active" : string.Empty;
+    }
+}

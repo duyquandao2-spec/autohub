@@ -1,0 +1,140 @@
+/* ── AUTOHUB Floating Contact Hub — independent fixed overlay, Monolith Velocity tokens ── */
+
+.contact-hub{
+    position:fixed;right:24px;bottom:calc(24px + var(--lift,0px));z-index:60;
+    display:flex;flex-direction:column;align-items:flex-end;gap:14px;
+}
+
+/* ── Menu (expands upward, phone item nearest the toggle) ── */
+.contact-hub__menu{
+    display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;
+    margin:0;padding:0;list-style:none;visibility:hidden;pointer-events:none;
+}
+.contact-hub.is-open .contact-hub__menu{visibility:visible;pointer-events:auto}
+
+.contact-hub__row{
+    opacity:0;visibility:hidden;
+    transform:translateY(12px) scale(.7);
+    transition:
+        opacity .2s var(--ease),
+        transform .26s var(--ease),
+        visibility 0s linear .26s;
+}
+.contact-hub.is-open .contact-hub__row{
+    opacity:1;visibility:visible;transform:none;
+    transition-delay:calc(var(--i) * 55ms);
+}
+
+.contact-hub__item{
+    position:relative;display:grid;place-items:center;
+    width:48px;height:48px;border-radius:50%;padding:0;
+    background:var(--ch-bg,#101315);color:var(--ch-fg,#fff);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:
+        0 10px 24px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .22s var(--ease),box-shadow .22s var(--ease),filter .22s var(--ease);
+}
+.contact-hub__item svg{width:20px;height:20px}
+.contact-hub__item:hover,
+.contact-hub__item:focus-visible{
+    transform:scale(1.1);
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.12);
+}
+.contact-hub__item:active{transform:scale(.96)}
+.contact-hub__item:focus-visible,
+.contact-hub__toggle:focus-visible{
+    outline:2px solid var(--signal);outline-offset:3px;
+}
+
+/* ── Tooltip — absolute, never affects layout ── */
+.contact-hub__tooltip{
+    position:absolute;right:calc(100% + 13px);top:50%;
+    padding:7px 11px;border-radius:6px;white-space:nowrap;
+    background:#14181b;color:var(--silver);
+    border:1px solid var(--line);
+    font:600 .72rem/1 var(--body);letter-spacing:.02em;
+    box-shadow:0 8px 20px rgba(0,0,0,.35);
+    opacity:0;visibility:hidden;
+    transform:translate(6px,-50%);
+    transition:opacity .18s var(--ease),transform .18s var(--ease),visibility 0s linear .18s;
+    pointer-events:none;z-index:1;
+}
+.contact-hub__item:hover .contact-hub__tooltip,
+.contact-hub__item:focus-visible .contact-hub__tooltip,
+.contact-hub__item.is-pending .contact-hub__tooltip{
+    opacity:1;visibility:visible;transform:translate(0,-50%);
+    transition-delay:0s;
+}
+
+/* ── Main button — existing APEX logo, graphite + Signal Red accents ── */
+.contact-hub__toggle{
+    position:relative;display:grid;place-items:center;flex:none;
+    width:56px;height:56px;border-radius:50%;padding:0;
+    background:radial-gradient(circle at 30% 25%,#171c20,var(--panel) 72%);
+    border:1px solid rgba(255,255,255,.15);
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.07);
+    transition:transform .26s var(--ease),box-shadow .26s var(--ease);
+}
+.contact-hub__toggle img{
+    display:block;width:32px;height:32px;object-fit:contain;
+}
+.contact-hub__toggle::before{
+    content:"";position:absolute;inset:-5px;border-radius:50%;
+    border:1px solid rgba(231,51,45,.45);
+    opacity:.8;transition:border-color .26s var(--ease),opacity .26s var(--ease);
+    pointer-events:none;
+}
+.contact-hub__toggle:hover{transform:scale(1.06)}
+.contact-hub__toggle:hover::before{border-color:rgba(231,51,45,.75)}
+.contact-hub__toggle:active{transform:scale(.95)}
+
+.contact-hub__dot{
+    position:absolute;top:2px;right:2px;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--signal);border:2px solid var(--ink);
+    transition:transform .26s var(--ease);
+}
+.contact-hub.is-open .contact-hub__dot{transform:scale(.55)}
+.contact-hub.is-open .contact-hub__toggle{transform:scale(.97)}
+.contact-hub.is-open .contact-hub__toggle::before{border-color:rgba(231,51,45,.9);opacity:1}
+
+/* ── Placeholder pulse — development-safe "not connected yet" state ── */
+@keyframes contact-hub-pulse{
+    0%{box-shadow:0 10px 24px rgba(0,0,0,.32),0 0 0 0 rgba(231,51,45,.5)}
+    100%{box-shadow:0 10px 24px rgba(0,0,0,.32),0 0 0 14px rgba(231,51,45,0)}
+}
+.contact-hub__item.is-pulse{animation:contact-hub-pulse .5s var(--ease) both}
+
+/* ── Tablet ── */
+@media(max-width:1024px){
+    .contact-hub{right:20px;bottom:calc(20px + var(--lift,0px));gap:12px}
+    .contact-hub__toggle{width:52px;height:52px}
+    .contact-hub__toggle img{width:29px;height:29px}
+    .contact-hub__item{width:44px;height:44px}
+    .contact-hub__item svg{width:19px;height:19px}
+}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+    .contact-hub{right:16px;bottom:calc(16px + var(--lift,0px));gap:11px}
+    .contact-hub__menu{gap:9px}
+    .contact-hub__item{width:44px;height:44px}
+}
+
+/* ── Reduced motion ── */
+@media(prefers-reduced-motion:reduce){
+    .contact-hub__row,
+    .contact-hub__item,
+    .contact-hub__tooltip,
+    .contact-hub__toggle,
+    .contact-hub__toggle::before,
+    .contact-hub__dot{transition-duration:.01ms;transition-delay:0s!important}
+    .contact-hub__row{transform:none}
+    .contact-hub__item:hover,.contact-hub__toggle:hover,.contact-hub.is-open .contact-hub__toggle{transform:none}
+    .contact-hub__item.is-pulse{animation:none}
+}

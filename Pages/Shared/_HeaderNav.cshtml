@@ -1,0 +1,136 @@
+@* ── AUTOHUB Header Navigation Hub — click-to-open dropdowns / mega-menus.
+   Content is data-driven from INavigationService (canonical vehicle dataset).
+   Desktop: overlay panels below the existing header (no layout shift).
+   Mobile: accordion inside the EXISTING .mobile-nav. ── *@
+@inject AutoHub.Services.INavigationService Navigation
+@model string
+@{
+    var variant = Model; /* "desktop" | "mobile" */
+    var nav = Navigation.Get();
+}
+@if (variant == "desktop")
+{
+    <nav class="desktop-nav nav-root" data-nav-root aria-label="Điều hướng chính">
+        <a class="nav-top-link" href="/" data-nav-home>Trang chủ</a>
+        @foreach (var section in nav.Sections)
+        {
+            var panelId = $"nav-panel-{section.Id}";
+            var panelClass = section.Id is "vehicles" or "experience" or "technology" ? "nav-panel--mega" : "nav-panel--dropdown";
+            <div class="nav-item" data-nav-item>
+                <button type="button" class="nav-top-link nav-trigger" data-nav-trigger
+                        aria-expanded="false" aria-haspopup="true" aria-controls="@panelId">
+                    @(section.Label)<svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+
+                <div class="nav-panel @panelClass"
+                     id="@panelId" data-nav-panel hidden>
+                    @if (section.Brands.Any())
+                    {
+                        <div class="nav-block nav-block--brands">
+                            <p class="nav-col-title">Thương hiệu</p>
+                            <div class="brand-grid">
+                                @foreach (var brand in section.Brands)
+                                {
+                                    <a class="brand-cell" href="@brand.Href">
+                                        @if (!string.IsNullOrEmpty(brand.LogoPath))
+                                        {
+                                            <span class="brand-cell__logo"><img src="@brand.LogoPath" alt="" loading="lazy" /></span>
+                                        }
+                                        <span class="brand-cell__name">@brand.Name</span>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="nav-columns">
+                    @foreach (var column in section.Columns)
+                    {
+                        <div class="nav-col">
+                            <p class="nav-col-title">@column.Title</p>
+                            <ul class="nav-list">
+                                @foreach (var entry in column.Entries)
+                                {
+                                    var isFilterLink = entry.Href != null && (entry.Href.StartsWith("/?") || entry.Href == "/" || entry.Href == "/#machines");
+                                    if (entry.ComingSoon)
+                                    {
+                                        <li class="nav-entry nav-entry--soon">
+                                            <span>@entry.Label</span><em>Sắp ra mắt</em>
+                                        </li>
+                                    }
+                                    else if (entry.OpensConsultDrawer)
+                                    {
+                                        <li>
+                                            <button type="button" class="nav-entry" data-nav-drawer>@entry.Label</button>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="nav-entry" href="@entry.Href" @(isFilterLink ? "data-ajax-load" : "")>
+                                                    <span>@entry.Label</span>
+                                                    @if (!string.IsNullOrEmpty(entry.Meta))
+                                                    {
+                                                        <small>@entry.Meta</small>
+                                                    }
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </nav>
+    <div class="nav-backdrop" data-nav-backdrop aria-hidden="true"></div>
+}
+else
+{
+    @foreach (var section in nav.Sections)
+    {
+        var subId = $"mobile-sub-{section.Id}";
+        <div class="mobile-acc">
+            <button type="button" class="mobile-acc__btn" data-acc-toggle
+                    aria-expanded="false" aria-controls="@subId">
+                @(section.Label)
+                <svg class="nav-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="mobile-sub" id="@subId">
+                @if (section.Brands.Any())
+                {
+                    <p class="mobile-sub__title">Thương hiệu</p>
+                    <div class="mobile-brand-grid">
+                        @foreach (var brand in section.Brands)
+                        {
+                            <a href="@brand.Href">@brand.Name</a>
+                        }
+                    </div>
+                }
+                @foreach (var column in section.Columns)
+                {
+                    <p class="mobile-sub__title">@column.Title</p>
+                    <ul>
+                        @foreach (var entry in column.Entries)
+                        {
+                            var isFilterLink = entry.Href != null && (entry.Href.StartsWith("/?") || entry.Href == "/" || entry.Href == "/#machines");
+                            if (entry.ComingSoon)
+                            {
+                                <li class="nav-entry--soon"><span>@entry.Label</span><em>Sắp ra mắt</em></li>
+                            }
+                            else if (entry.OpensConsultDrawer)
+                            {
+                                <li><button type="button" class="mobile-drawer-btn" data-nav-drawer>@entry.Label</button></li>
+                            }
+                        else
+                        {
+                            <li><a href="@entry.Href" @(isFilterLink ? "data-ajax-load" : "")>@entry.Label</a></li>
+                        }
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+}

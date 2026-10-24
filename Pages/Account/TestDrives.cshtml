@@ -1,0 +1,35 @@
+@page
+@model AutoHub.Pages.Account.TestDrivesModel
+@{
+    ViewData["Title"] = "Lịch lái thử";
+    ViewData["AccountTitle"] = "Lịch lái thử";
+}
+@if (Model.TestDrives.Count == 0)
+{
+    <div class="panel panel--pad" style="text-align:center;padding:60px 30px">
+        <p class="text-m">Bạn chưa có lịch lái thử nào.</p>
+        <div class="actions-row" style="justify-content:center">
+            <a class="btn-auth" href="/TestDrive">Đặt lịch lái thử</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="panel panel--pad">
+        <table class="acct-table">
+            <thead><tr><th>Xe</th><th>Ngày</th><th>Khung giờ</th><th>Trạng thái</th><th>Ngày đặt</th></tr></thead>
+            <tbody>
+                @foreach (var t in Model.TestDrives)
+                {
+                    <tr>
+                        <td>@(t.Variant?.VariantName ?? "—")</td>
+                        <td>@t.PreferredDate.ToString("dd/MM/yyyy")</td>
+                        <td>@t.TimeSlot</td>
+                        <td><span class="badge badge--@AutoHub.Services.StatusWorkflow.BadgeClass(t.Status)">@AutoHub.Services.StatusWorkflow.Label(t.Status)</span></td>
+                        <td>@t.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

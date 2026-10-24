@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUTOHUB Header Navigation Hub
+   Adds hover-to-open dropdowns / mega-menus to the EXISTING header.
+   Overlay-only: panels are position:absolute → zero layout shift,
+   hero/cards/sections are never pushed down.
+   Dark identity untouched (site.css); light-mode overrides at bottom.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Top-level items (visual twin of legacy .desktop-nav a) ──── */
+.site-header__inner{position:relative}
+.nav-root{align-items:center}
+.nav-item{position:relative;display:flex;cursor:pointer}
+.nav-top-link{
+    position:relative;display:inline-flex;align-items:center;gap:6px;
+    padding:.5rem 0;background:none;border:0;color:#a2aaae;
+    font-family:var(--display);font-size:.72rem;cursor:pointer;
+}
+.nav-top-link::after{
+    content:"";position:absolute;inset:auto 0 0;height:1px;background:var(--signal);
+    transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease);
+}
+.nav-top-link:hover{color:#fff}
+.nav-top-link:hover::after,.nav-item.is-open .nav-top-link::after{transform:scaleX(1)}
+.nav-caret{width:11px;height:11px;opacity:.55;transition:transform .22s var(--ease)}
+.nav-item.is-open .nav-caret{transform:rotate(180deg);opacity:1}
+.nav-item.is-open .nav-top-link{color:#fff}
+
+/* ── Overlay backdrop (below header z-index, above page) ─────── */
+.nav-backdrop{
+    position:fixed;inset:0;z-index:49;background:rgba(6,8,9,.52);
+    opacity:0;visibility:hidden;transition:opacity .22s var(--ease),visibility .22s var(--ease);
+}
+.nav-backdrop.is-visible{opacity:1;visibility:visible}
+
+/* Header turns solid while a panel is open (no see-through seams) */
+.site-header.has-open-menu{background:rgba(9,11,13,.97);border-bottom-color:transparent}
+
+/* ── Dropdown / mega-menu panel ───────────────────────────────── */
+.nav-panel{
+    position:absolute;top:calc(100% + 10px);left:50%;z-index:60;
+    width:max-content;max-width:calc(100vw - 32px);
+    max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain;
+    background:#0d1012;border:1px solid rgba(255,255,255,.10);border-radius:6px;
+    box-shadow:0 30px 70px rgba(0,0,0,.55),0 4px 18px rgba(0,0,0,.35);
+    padding:26px 28px;
+    opacity:0;visibility:hidden;
+    transform:translate(calc(-50% + var(--panel-shift,0px)),10px);
+    transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s var(--ease);
+}
+.nav-item.is-open .nav-panel{
+    opacity:1;visibility:visible;
+    transform:translate(calc(-50% + var(--panel-shift,0px)),0);
+}
+.nav-panel--mega{min-width:min(720px,calc(100vw - 32px))}
+.nav-panel--dropdown{min-width:min(400px,calc(100vw - 32px));padding:20px 22px}
+
+/* Brand block (Dòng xe) */
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin:12px 0 4px}
+.brand-cell{
+    display:flex;align-items:center;gap:10px;padding:9px 12px;
+    border:1px solid var(--line);border-radius:5px;background:#121517;
+    transition:border-color .16s var(--ease),background .16s var(--ease),color .16s var(--ease);
+}
+.brand-cell__logo{display:inline-flex;align-items:center;justify-content:center;flex:0 0 34px;height:22px}
+.brand-cell__logo img{max-width:32px;max-height:20px;object-fit:contain;opacity:.85}
+.brand-cell__name{font:700 .68rem var(--display);letter-spacing:.05em;color:#c7ced1;text-transform:uppercase;white-space:nowrap}
+.brand-cell:hover{border-color:rgba(231,51,45,.55);background:rgba(231,51,45,.08)}
+.brand-cell:hover .brand-cell__name{color:#fff}
+
+/* Link columns */
+.nav-columns{display:flex;gap:38px;margin-top:14px;padding-top:18px;border-top:1px solid var(--line)}
+.nav-block--brands + .nav-columns{margin-top:18px}
+.nav-col{flex:1 1 0;min-width:170px}
+.nav-col-title{
+    display:inline-flex;align-items:center;gap:.55rem;margin:0 0 6px;
+    color:#7f888c;font-size:.6rem;line-height:1;font-weight:700;
+    letter-spacing:.18em;text-transform:uppercase;
+}
+.nav-col-title::before{content:"";width:16px;height:1px;background:var(--signal)}
+.nav-list{list-style:none;margin:0;padding:0}
+.nav-list li{margin:2px 0}
+.nav-entry{
+    display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+    width:100%;text-align:left;padding:9px 12px;margin:0 -12px;width:calc(100% + 24px);
+    border:0;border-radius:5px;background:none;color:#c3cacd;
+    font:500 .82rem/1.35 var(--body);
+    transition:background .15s var(--ease),color .15s var(--ease);
+}
+.nav-entry span{white-space:nowrap}
+.nav-entry small{font-size:.66rem;color:#757f83;letter-spacing:.04em;white-space:nowrap}
+a.nav-entry:hover,button.nav-entry:hover{background:rgba(231,51,45,.09);color:#fff}
+a.nav-entry:hover small{color:#aab3b7}
+.nav-entry--soon{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    padding:9px 12px;margin:0 -12px;color:#6b7478;font:500 .82rem/1.35 var(--body);cursor:default;
+}
+.nav-entry--soon em{
+    font-style:normal;font-size:.54rem;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:#8b959a;border:1px solid var(--line);
+    border-radius:999px;padding:3px 8px;white-space:nowrap;
+}
+
+/* Keyboard focus */
+.nav-top-link:focus-visible,.nav-entry:focus-visible,.brand-cell:focus-visible{
+    outline:2px solid var(--signal);outline-offset:2px;
+}
+
+/* ── Mobile accordion (inside EXISTING .mobile-nav) ───────────── */
+.mobile-acc__btn{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    width:100%;padding:13px 0;background:none;border:0;border-bottom:1px solid var(--line);
+    color:inherit;font-family:var(--display);font-size:.85rem;text-align:left;
+}
+.mobile-acc.is-open .mobile-acc__btn .nav-caret{transform:rotate(180deg)}
+.mobile-sub{max-height:0;overflow:hidden;transition:max-height .28s var(--ease)}
+.mobile-sub.is-open{max-height:1600px}
+.mobile-sub__title{
+    display:inline-flex;align-items:center;gap:.5rem;margin:14px 0 2px;
+    color:#7f888c;font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+}
+.mobile-sub__title::before{content:"";width:14px;height:1px;background:var(--signal)}
+.mobile-sub ul{list-style:none;margin:0;padding:0}
+.mobile-sub li a,.mobile-drawer-btn{
+    display:flex;justify-content:space-between;gap:12px;width:100%;
+    padding:9px 0;background:none;border:0;border-bottom:1px solid rgba(255,255,255,.06);
+    color:#c3cacd;font:500 .8rem var(--body);text-align:left;
+}
+.mobile-sub li a:hover,.mobile-drawer-btn:hover{color:#fff}
+.mobile-brand-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding-bottom:6px}
+.mobile-brand-grid a{
+    padding:8px 10px;border:1px solid var(--line);font:700 .66rem var(--display);
+    letter-spacing:.05em;text-transform:uppercase;color:#c7ced1;text-align:center;
+}
+.mobile-brand-grid a:hover{border-color:rgba(231,51,45,.55);color:#fff}
+.mobile-sub .nav-entry--soon{
+    display:flex;justify-content:space-between;gap:12px;padding:9px 0;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    color:#6b7478;font:500 .8rem var(--body);
+}
+.mobile-sub .nav-entry--soon em{
+    font-style:normal;font-size:.52rem;font-weight:700;letter-spacing:.12em;
+    text-transform:uppercase;color:#8b959a;border:1px solid var(--line);
+    border-radius:999px;padding:3px 8px;white-space:nowrap;
+}
+
+/* ── Responsive guards ────────────────────────────────────────── */
+@media(max-width:1024px){
+    .nav-columns{gap:26px}
+    .nav-panel--mega{min-width:min(640px,calc(100vw - 32px))}
+}
+@media(max-width:900px){
+    /* Desktop nav hidden by site.css; accordion lives inside .mobile-nav */
+    .nav-backdrop{display:none}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+    .nav-panel,.nav-backdrop,.nav-caret,.mobile-sub{transition:none}
+}
+
+/* ═══ LIGHT THEME — matches theme.css neutral automotive palette ═══ */
+html[data-theme="light"] .nav-top-link{color:#565f63}
+html[data-theme="light"] .nav-top-link:hover,
+html[data-theme="light"] .nav-item.is-open .nav-top-link{color:#101315}
+html[data-theme="light"] .site-header.has-open-menu{background:rgba(240,242,242,.97)}
+html[data-theme="light"] .nav-backdrop{background:rgba(21,24,26,.32)}
+html[data-theme="light"] .nav-panel{
+    background:#fbfcfc;border-color:rgba(16,20,22,.13);
+    box-shadow:0 30px 70px rgba(30,40,45,.28),0 4px 18px rgba(30,40,45,.12);
+}
+html[data-theme="light"] .brand-cell{background:#ffffff;border-color:rgba(16,20,22,.12)}
+html[data-theme="light"] .brand-cell:hover{background:rgba(231,51,45,.07)}
+html[data-theme="light"] .brand-cell__name,
+html[data-theme="light"] .mobile-brand-grid a{color:#495154}
+html[data-theme="light"] .nav-columns{border-top-color:rgba(16,20,22,.1)}
+html[data-theme="light"] .nav-col-title,
+html[data-theme="light"] .mobile-sub__title{color:#565f63}
+html[data-theme="light"] .nav-entry{color:#33393c}
+html[data-theme="light"] a.nav-entry:hover,
+html[data-theme="light"] button.nav-entry:hover{background:rgba(231,51,45,.08);color:#101315}
+html[data-theme="light"] .nav-entry small{color:#697377}
+html[data-theme="light"] a.nav-entry:hover small{color:#3f474b}
+html[data-theme="light"] .nav-entry--soon,
+html[data-theme="light"] .mobile-sub .nav-entry--soon{color:#8b959a}
+html[data-theme="light"] .nav-entry--soon em{color:#5f676b;border-color:rgba(16,20,22,.16)}
+html[data-theme="light"] .mobile-acc__btn{border-bottom-color:rgba(16,20,22,.13)}
+html[data-theme="light"] .mobile-sub li a,
+html[data-theme="light"] .mobile-drawer-btn,
+html[data-theme="light"] .mobile-sub .nav-entry--soon{border-bottom-color:rgba(16,20,22,.08)}
+html[data-theme="light"] .mobile-sub li a{color:#33393c}
+html[data-theme="light"] .mobile-sub li a:hover{color:#101315}
+html[data-theme="light"] .mobile-brand-grid a{border-color:rgba(16,20,22,.13)}

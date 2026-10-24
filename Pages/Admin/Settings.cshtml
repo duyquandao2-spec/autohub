@@ -1,0 +1,76 @@
+@page
+@model AutoHub.Pages.Admin.SettingsModel
+@{
+    ViewData["Title"] = "Cấu hình hệ thống";
+    ViewData["AdminBreadcrumb"] = "Cấu hình";
+}
+@if (TempData["StatusMessage"] != null)
+{
+    <div class="apx-alert">@TempData["StatusMessage"]</div>
+}
+
+<div class="apx-panel" style="margin-bottom:18px;padding:24px 26px">
+    <h2 style="margin:0 0 4px;color:#fff;font:600 .8rem var(--display);letter-spacing:.1em;text-transform:uppercase">Thông tin showroom</h2>
+    <p class="text-m" style="margin:0 0 18px">Các thông tin hiển thị chung trên trang công khai.</p>
+    <form method="post" asp-page-handler="Save">
+        <div class="form-grid">
+            <div class="field">
+                <label class="field__label">Tên cửa hàng</label>
+                <input class="apx-input" asp-for="StorefrontName" style="width:100%" />
+            </div>
+            <div class="field">
+                <label class="field__label">Hotline</label>
+                <input class="apx-input" asp-for="Hotline" style="width:100%" />
+            </div>
+            <div class="field">
+                <label class="field__label">Email liên hệ</label>
+                <input class="apx-input" asp-for="ContactEmail" style="width:100%" />
+            </div>
+            <div class="field">
+                <label class="field__label">Điện thoại liên hệ</label>
+                <input class="apx-input" asp-for="ContactPhone" style="width:100%" />
+            </div>
+            <div class="field field--full">
+                <label class="field__label">Địa chỉ</label>
+                <input class="apx-input" asp-for="Address" style="width:100%" />
+            </div>
+        </div>
+        <div class="actions-row">
+            <button class="apx-btn" type="submit">Lưu cấu hình</button>
+        </div>
+    </form>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-panel__head"><h2>Showroom</h2></div>
+    <div style="padding:18px 20px">
+        <form method="post" asp-page-handler="Showroom" class="apx-bar" style="margin-bottom:18px">
+            <input class="apx-input" asp-for="NewName" placeholder="Tên showroom" style="flex:1;min-width:160px" required />
+            <input class="apx-input" asp-for="NewCode" placeholder="Mã" style="min-width:100px" />
+            <input class="apx-input" asp-for="NewAddress" placeholder="Địa chỉ" style="flex:1;min-width:180px" />
+            <input class="apx-input" asp-for="NewPhone" placeholder="Điện thoại" style="min-width:120px" />
+            <input class="apx-input" asp-for="NewEmail" placeholder="Email" style="min-width:140px" />
+            <button class="apx-btn" type="submit">Thêm</button>
+        </form>
+
+        <table class="apx-table">
+            <thead><tr><th>Name</th><th>Mã</th><th>Địa chỉ</th><th>Điện thoại</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+                @if (Model.Showrooms.Count == 0)
+                {
+                    <tr><td colspan="5" class="muted">Chưa có showroom.</td></tr>
+                }
+                @foreach (var s in Model.Showrooms)
+                {
+                    <tr>
+                        <td>@s.Name</td>
+                        <td class="muted">@s.Code</td>
+                        <td>@s.Address</td>
+                        <td>@s.Phone</td>
+                        <td><span class="badge badge--@(s.IsActive ? "ok" : "muted")">@(s.IsActive ? "Hoạt động" : "Tạm ngưng")</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

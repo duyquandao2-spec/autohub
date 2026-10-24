@@ -1,4 +1,4 @@
-@page "{slug}"
+@page "/Vehicles/{slug}"
 @model AutoHub.Pages.Vehicles.DetailModel
 @{
     ViewData["Title"] = $"{Model.Vehicle.Name} — AUTOHUB";
@@ -15,7 +15,8 @@
                     <p class="product-hero__kind">@Model.Vehicle.Category · @Model.Vehicle.Drivetrain</p>
                     <p class="product-hero__lede">@Model.Vehicle.Description</p>
                     <div class="product-hero__actions">
-                        <button class="button button--signal" type="button" data-appointment>Đặt lịch lái thử <span>→</span></button>
+                        <a class="button button--signal" asp-page="/TestDrive" asp-route-vehicle="@Model.Vehicle.Slug">Đặt lịch lái thử <span>→</span></a>
+                        <a class="button button--ghost" asp-page="/Finance" asp-route-vehicle="@Model.Vehicle.Slug">Dự toán lăn bánh & Trả góp <span>↗</span></a>
                         <a class="text-action" href="#specifications">Đọc thông số <span class="circle-icon">↓</span></a>
                     </div>
                     <div class="product-signal"><i></i><span>TÍN HIỆU ĐÃ HIỆU CHỈNH / @Model.Vehicle.Code</span></div>
@@ -53,7 +54,7 @@
 
     @if (Model.Vehicle.Colors.Any())
     {
-        <section class="shell product-color-section">
+        <section class="shell product-color-section" id="colors">
             <div class="product-section-heading reveal"><div><p class="eyebrow">Lựa chọn màu sắc</p><h2>Tìm màu<br />của riêng bạn.</h2></div><p>Mỗi màu sắc được thiết kế để tôn lên đường nét và tính cách của @Model.Vehicle.Name.</p></div>
             <div class="product-color-grid reveal reveal--delay-1">
                 @foreach (var color in Model.Vehicle.Colors)
@@ -79,6 +80,6 @@
     </section>
 
     <section class="shell product-cta reveal">
-        <div><p class="eyebrow">Bước tiếp theo</p><h2>Để dữ liệu lùi lại.<br />Để cảm giác lên tiếng.</h2></div><div><p>Chọn một khung giờ riêng để trực tiếp trải nghiệm cách @Model.Vehicle.Name phản hồi với cung đường của bạn.</p><button class="button button--light" type="button" data-appointment>Yêu cầu tư vấn <span>→</span></button></div>
+        <div><p class="eyebrow">Bước tiếp theo</p><h2>Để dữ liệu lùi lại.<br />Để cảm giác lên tiếng.</h2></div><div><p>Chọn một khung giờ riêng để trực tiếp trải nghiệm cách @Model.Vehicle.Name phản hồi với cung đường của bạn.</p><a class="button button--light" asp-page="/Contact">Yêu cầu tư vấn <span>→</span></a></div>
     </section>
 </main>

@@ -1,0 +1,88 @@
+@page
+@model AutoHub.Pages.Admin.Vehicles.IndexModel
+@{
+    ViewData["Title"] = "Quản lý xe";
+    ViewData["AdminBreadcrumb"] = "Xe &amp; Thương hiệu";
+    ViewData["CurrentPage"] = Model.PageNumber;
+    ViewData["TotalPages"] = Model.TotalPages <= 1 ? 1 : Model.TotalPages;
+    ViewData["BaseUrl"] = "/admin/vehicles";
+    ViewData["Query"] = new Dictionary<string, string?> { ["search"] = Model.Search, ["status"] = Model.Status };
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="apx-alert apx-alert--ok" style="margin-bottom:14px;background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#10b981;padding:10px 16px;border-radius:8px">
+        ✓ @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <select class="apx-select" name="status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="ACTIVE" selected="@(Model.Status == "ACTIVE")">Đang bán</option>
+            <option value="ARCHIVED" selected="@(Model.Status == "ARCHIVED")">Đã lưu trữ</option>
+            <option value="COMING_SOON" selected="@(Model.Status == "COMING_SOON")">Sắp ra mắt</option>
+        </select>
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo tên xe / mẫu..." />
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn apx-btn--ghost" asp-page="/Admin/Vehicles/Index">Đặt lại</a>
+        <a class="apx-btn apx-btn--signal" asp-page="/Admin/Vehicles/Create">+ Thêm xe mới</a>
+    </form>
+    <span class="text-m">@Model.Total xe</span>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Xe</th><th>Mẫu / Thương hiệu</th><th>Giá</th><th>Trạng thái</th><th>Nhãn</th><th>Thao tác</th></tr></thead>
+            <tbody>
+                @if (Model.Vehicles.Count == 0)
+                {
+                    <tr><td colspan="6" class="muted">Không tìm thấy xe.</td></tr>
+                }
+                @foreach (var v in Model.Vehicles)
+                {
+                    <tr>
+                        <td>
+                            <a href="/vehicles/@v.Slug" target="_blank" style="font-weight:600">@v.Name</a>
+                        </td>
+                        <td>@v.Model<br /><span class="muted">@v.Brand</span></td>
+                        <td>@v.Price.ToString("N0") @v.Currency</td>
+                        <td><span class="badge badge--@(v.Status == "ACTIVE" ? "ok" : v.Status == "COMING_SOON" ? "warn" : "muted")">@v.Status</span></td>
+                        <td>
+                            @if (v.Featured) { <span class="badge badge--signal" style="margin-right:4px">Nổi bật</span> }
+                            @if (v.NewArrival) { <span class="badge badge--ok">Mới</span> }
+                            @if (!v.Available) { <span class="badge badge--muted">Hết hàng</span> }
+                        </td>
+                        <td>
+                            <div class="row-actions" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+                                <a class="apx-btn apx-btn--ghost apx-btn--sm" asp-page="/Admin/Vehicles/Edit" asp-route-id="@v.VariantId">Sửa</a>
+                                <form method="post" asp-page-handler="ToggleAvailable">
+                                    <input type="hidden" name="id" value="@v.VariantId" />
+                                    <button class="apx-btn apx-btn--ghost apx-btn--sm" type="submit">@(v.Available ? "Ẩn" : "Hiện")</button>
+                                </form>
+                                <form method="post" asp-page-handler="ToggleFeatured">
+                                    <input type="hidden" name="id" value="@v.VariantId" />
+                                    <button class="apx-btn apx-btn--ghost apx-btn--sm" type="submit">@(v.Featured ? "Bỏ sao" : "★ Nổi bật")</button>
+                                </form>
+                                <form method="post" asp-page-handler="NewArrival">
+                                    <input type="hidden" name="id" value="@v.VariantId" />
+                                    <button class="apx-btn apx-btn--ghost apx-btn--sm" type="submit">@(v.NewArrival ? "Bỏ mới" : "Mới")</button>
+                                </form>
+                                <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Bạn có chắc chắn muốn xóa xe @v.Name khỏi hệ thống?');">
+                                    <input type="hidden" name="id" value="@v.VariantId" />
+                                    <button class="apx-btn apx-btn--ghost apx-btn--sm" type="submit" style="color:#ff4d4f">Xóa</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

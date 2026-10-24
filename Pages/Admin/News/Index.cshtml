@@ -1,0 +1,60 @@
+@page
+@model AutoHub.Pages.Admin.News.IndexModel
+@{
+    ViewData["Title"] = "Tin tức";
+    ViewData["AdminBreadcrumb"] = "Tin tức";
+    ViewData["CurrentPage"] = Model.Paged.CurrentPage;
+    ViewData["TotalPages"] = Model.Paged.TotalPages == 0 ? 1 : Model.Paged.TotalPages;
+    ViewData["BaseUrl"] = "/admin/news";
+    ViewData["Query"] = new Dictionary<string, string?> { ["status"] = Model.Status, ["search"] = Model.Search };
+}
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <select class="apx-select" name="status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="DRAFT" selected="@(Model.Status == "DRAFT")">Nháp</option>
+            <option value="PUBLISHED" selected="@(Model.Status == "PUBLISHED")">Đã đăng</option>
+            <option value="ARCHIVED" selected="@(Model.Status == "ARCHIVED")">Đã lưu trữ</option>
+        </select>
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo tiêu đề, tác giả..." />
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn" asp-page="/admin/news/edit">+ Bài viết mới</a>
+    </form>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Tiêu đề</th><th>Loại</th><th>Tác giả</th><th>Trạng thái</th><th>Cập nhật</th><th>Thao tác</th></tr></thead>
+            <tbody>
+                @if (Model.Paged.Items.Count == 0)
+                {
+                    <tr><td colspan="6" class="muted">Không có bài viết nào.</td></tr>
+                }
+                @foreach (var a in Model.Paged.Items)
+                {
+                    <tr>
+                        <td><a asp-page="/admin/news/edit" asp-route-id="@a.Id">@a.Title</a></td>
+                        <td>@a.Kind</td>
+                        <td class="muted">@(a.AuthorName ?? "—")</td>
+                        <td><span class="badge badge--@(a.Status == "PUBLISHED" ? "ok" : a.Status == "DRAFT" ? "warn" : "muted")">@a.Status</span></td>
+                        <td class="muted">@a.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <div class="row-actions" style="display:flex;gap:6px">
+                                @if (a.Status != "PUBLISHED")
+                                {
+                                    <form method="post" asp-page-handler="Publish"><input type="hidden" name="id" value="@a.Id" /><button class="apx-btn apx-btn--sm" type="submit">Đăng</button></form>
+                                }
+                                <form method="post" asp-page-handler="Archive"><input type="hidden" name="id" value="@a.Id" /><button class="apx-btn apx-btn--danger apx-btn--sm" type="submit" data-confirm="Lưu trữ bài viết này?">Lưu trữ</button></form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Paged.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

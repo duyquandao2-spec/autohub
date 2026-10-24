@@ -1,0 +1,39 @@
+@page
+@model AutoHub.Pages.Account.FavoritesModel
+@{
+    ViewData["Title"] = "Xe yêu thích";
+    ViewData["AccountTitle"] = "Xe yêu thích";
+}
+@if (!string.IsNullOrEmpty(Model.StatusMessage))
+{
+    <div class="auth-status">@Model.StatusMessage</div>
+}
+
+@if (Model.Favorites.Count == 0)
+{
+    <div class="panel panel--pad" style="text-align:center;padding:60px 30px">
+        <p class="text-m">Bạn chưa lưu xe nào vào danh sách yêu thích.</p>
+        <div class="actions-row" style="justify-content:center">
+            <a class="btn-auth" href="/#machines">Khám phá xe</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="acct-grid">
+        @foreach (var fav in Model.Favorites)
+        {
+            <div class="acct-tile">
+                <strong style="font-size:1.05rem">@fav.Vehicle.VariantName</strong>
+                <span>@(fav.Vehicle.Model?.Name) · @(fav.Vehicle.BasePrice.ToString("N0")) @fav.Vehicle.CurrencyCode</span>
+                <p class="text-m" style="margin-top:10px">Đã lưu @fav.CreatedAt.ToString("dd/MM/yyyy")</p>
+                <div class="row-actions" style="margin-top:14px">
+                    <a class="text-btn" href="/vehicles/@fav.Vehicle.Slug">Xem chi tiết</a>
+                    <form method="post" asp-page="/account/favorites" asp-route-remove="@fav.VehicleId">
+                        <button type="submit" class="text-btn" style="color:#ff7a75;border:0;background:none;padding:0;font:inherit;cursor:pointer;text-decoration:underline">Bỏ yêu thích</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}

@@ -96,7 +96,7 @@
       + '<div class="ps-lead__grad"></div>'
       + '<div class="ps-lead__grid" aria-hidden="true"></div>'
       + '<div class="ps-lead__top">'
-      +   '<span class="ps-lead__source">' + esc(item.sourceName) + ' / EU DATA</span>'
+      +   '<span class="ps-lead__source">' + esc(item.sourceName) + '</span>'
       +   '<span class="ps-lead__date">' + fmtDate(item.publishedAt) + ' \u2197</span>'
       + '</div>'
       + metricHtml
@@ -134,16 +134,20 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     Ticker — inside right column, pulsing red dot
-     ═══════════════════════════════════════════════════════════ */
+      Ticker — inside right column, pulsing red dot
+      ═══════════════════════════════════════════════════════════ */
+  var VERIFIED_SOURCES = ['AUTODAILY', 'CARTIMES', 'CAR AND DRIVER'];
+
   function ticker(sources) {
     var seen = [];
     sources.forEach(function (s) { if (seen.indexOf(s) === -1) seen.push(s); });
-    seen = seen.slice(0, 5);
+    var list = seen.length ? seen : VERIFIED_SOURCES;
+    VERIFIED_SOURCES.forEach(function (s) { if (list.indexOf(s) === -1) list.push(s); });
+    list = list.slice(0, 5);
 
     return '<div class="ps-ticker">'
       + '<span class="ps-ticker__left"><i class="ps-ticker__dot" aria-hidden="true"></i>VERIFIED SOURCES</span>'
-      + '<span class="ps-ticker__right">' + seen.map(esc).join(' \u00B7 ') + '</span>'
+      + '<span class="ps-ticker__right">' + list.map(esc).join(' \u00B7 ') + '</span>'
       + '</div>';
   }
 

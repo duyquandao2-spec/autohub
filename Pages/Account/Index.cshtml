@@ -1,0 +1,94 @@
+@page
+@model AutoHub.Pages.Account.IndexModel
+@{
+    ViewData["Title"] = "Tổng quan tài khoản";
+    ViewData["AccountTitle"] = "Tổng quan";
+}
+<div class="field field--full" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:18px">
+    <div>
+        <h2 style="margin:0;color:#fff;font:600 1.2rem var(--display)">Xin chào, @Model.Profile?.FullName</h2>
+        <p class="text-m" style="margin:.3rem 0 0">@Model.Profile?.Email</p>
+    </div>
+    <span class="badge @(Model.UnreadNotifications > 0 ? "badge--signal" : "badge--muted")">@Model.UnreadNotifications thông báo chưa đọc</span>
+</div>
+
+<section class="acct-grid" style="margin-bottom:26px">
+    <div class="acct-tile"><strong>@Model.FavoriteCount</strong><span>Xe yêu thích</span></div>
+    <div class="acct-tile"><strong>@Model.ConsultationCount</strong><span>Lịch tư vấn</span></div>
+    <div class="acct-tile"><strong>@Model.TestDriveCount</strong><span>Lịch lái thử</span></div>
+</section>
+
+<div class="panel panel--pad" style="margin-bottom:26px">
+    <h3 class="panel__title">Xe yêu thích gần đây</h3>
+    @if (Model.Favorites.Count == 0)
+    {
+        <p class="text-m">Bạn chưa lưu xe nào. <a class="text-btn" href="/#machines">Khám phá xe</a></p>
+    }
+    else
+    {
+        <div class="acct-grid">
+            @foreach (var fav in Model.Favorites)
+            {
+                <div class="acct-tile">
+                    <strong style="font-size:1.05rem">@fav.Vehicle.VariantName</strong>
+                    <span>@(fav.Vehicle.Model?.Name) · @(fav.Vehicle.BasePrice.ToString("N0")) @fav.Vehicle.CurrencyCode</span>
+                    <div class="row-actions" style="margin-top:12px">
+                        <a class="text-btn" href="/vehicles/@fav.Vehicle.Slug">Xem chi tiết</a>
+                        <form method="post" asp-page="/account/favorites" asp-route-remove="@fav.VehicleId">
+                            <button type="submit" class="text-btn" style="color:#ff7a75;border:0;background:none;padding:0;font:inherit;cursor:pointer;text-decoration:underline">Bỏ yêu thích</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div class="panel panel--pad" style="margin-bottom:26px">
+    <h3 class="panel__title">Lịch tư vấn gần đây</h3>
+    @if (Model.RecentConsultations.Count == 0)
+    {
+        <p class="text-m">Chưa có buổi tư vấn nào. <a class="text-btn" href="/#machines">Đặt tư vấn</a></p>
+    }
+    else
+    {
+        <table class="acct-table">
+            <thead><tr><th>Ngày ưa thích</th><th>Phương thức</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+                @foreach (var c in Model.RecentConsultations)
+                {
+                    <tr>
+                        <td>@(c.PreferredDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@c.ConsultationMethod</td>
+                        <td><span class="badge badge--@(c.Status == "NEW" ? "signal" : "ok")">@c.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<div class="panel panel--pad">
+    <h3 class="panel__title">Lịch lái thử gần đây</h3>
+    @if (Model.RecentTestDrives.Count == 0)
+    {
+        <p class="text-m">Chưa có lịch lái thử nào. <a class="text-btn" href="/TestDrive">Đặt lịch lái thử</a></p>
+    }
+    else
+    {
+        <table class="acct-table">
+            <thead><tr><th>Xe</th><th>Ngày</th><th>Khung giờ</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+                @foreach (var t in Model.RecentTestDrives)
+                {
+                    <tr>
+                        <td>@(t.Variant?.VariantName ?? "—")</td>
+                        <td>@t.PreferredDate.ToString("dd/MM/yyyy")</td>
+                        <td>@t.TimeSlot</td>
+                        <td><span class="badge badge--@(t.Status == "PENDING" ? "signal" : "ok")">@t.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

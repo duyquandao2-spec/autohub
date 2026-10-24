@@ -1,0 +1,36 @@
+@using Microsoft.AspNetCore.Identity
+@using AutoHub.Models.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<div class="auth-menu" data-auth-menu>
+@if (SignInManager.IsSignedIn(User))
+{
+    var isStaff = User.IsInRole(AutoHub.Models.RoleNames.Manager)
+        || User.IsInRole(AutoHub.Models.RoleNames.Administrator)
+        || User.IsInRole(AutoHub.Models.RoleNames.SuperAdmin)
+        || User.IsInRole(AutoHub.Models.RoleNames.Sales)
+        || User.IsInRole(AutoHub.Models.RoleNames.ContentEditor);
+    <button type="button" class="auth-menu__avatar" data-account-toggle aria-expanded="false" aria-label="Tài khoản">
+        <span class="auth-menu__avatar-initial">@((User.Identity!.Name![..1]).ToUpperInvariant())</span>
+        <span class="auth-menu__name">@User.Identity.Name!.Split('@')[0]</span>
+    </button>
+    <div class="auth-menu__dd" data-account-dd hidden>
+        <a href="/account">Tài khoản</a>
+        <a href="/account/profile">Hồ sơ</a>
+        <a href="/account/security">Bảo mật</a>
+        @if (isStaff)
+        {
+            <a href="/admin" class="auth-menu__admin">Quản trị</a>
+        }
+        <form method="post" action="/logout" class="auth-menu__logout">
+            @Html.AntiForgeryToken()
+            <button type="submit">Đăng xuất</button>
+        </form>
+    </div>
+}
+else
+{
+    <a class="auth-menu__link" href="/login">Đăng nhập</a>
+    <a class="auth-menu__link auth-menu__link--cta" href="/register">Đăng ký</a>
+}
+</div>

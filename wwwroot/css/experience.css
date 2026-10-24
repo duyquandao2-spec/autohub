@@ -1,0 +1,477 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUTOHUB Experience Page — Monolith Velocity Cinematic Layer
+   Extends the existing design system (site.css tokens).
+   No layout redesign — enhancement only.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Page root ────────────────────────────────────────────── */
+.exp-page{padding-top:76px}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO — mirrors Index hero structure, unique content
+   ═══════════════════════════════════════════════════════════════ */
+.exp-hero{
+    position:relative;min-height:820px;isolation:isolate;overflow:hidden;
+    border-bottom:1px solid var(--line);
+    background:radial-gradient(circle at 84% 30%,rgba(88,101,108,.18),transparent 28%),#0b0e10;
+}
+.exp-hero__bg{position:absolute;inset:0;pointer-events:none}
+.exp-hero__grid{
+    position:absolute;inset:0;
+    background:
+        linear-gradient(90deg,rgba(231,51,45,.12) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px);
+    background-size:84px 100%,100% 54px;
+}
+.exp-hero__vignette{
+    position:absolute;inset:0;
+    background:
+        radial-gradient(circle at 70% 48%,rgba(231,51,45,.1),transparent 22%),
+        linear-gradient(90deg,rgba(11,14,16,.92),rgba(11,14,16,.35) 43%,rgba(11,14,16,.08) 70%,rgba(11,14,16,.75)),
+        linear-gradient(0deg,#0b0e10,transparent 33%);
+}
+.exp-hero__sweep{
+    position:absolute;inset:0;
+    background:linear-gradient(135deg,transparent 40%,rgba(231,51,45,.06) 50%,transparent 60%);
+    animation:exp-sweep 6s ease-in-out infinite alternate;
+}
+@keyframes exp-sweep{
+    0%{opacity:.4;transform:translateX(-10%)}
+    100%{opacity:1;transform:translateX(10%)}
+}
+.exp-hero__content{
+    position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;
+    min-height:820px;padding:120px 0 80px;
+}
+.exp-hero__copy{max-width:680px}
+.exp-hero__copy h1{
+    margin:1.1rem 0 0;
+    font:600 clamp(3rem,7vw,6.8rem)/.87 var(--display);
+    letter-spacing:-.07em;color:#fff;
+}
+.exp-hero__subtitle{display:block;margin-top:.15em;color:rgba(255,255,255,.45)}
+.exp-hero__lede{max-width:520px;margin:1.4rem 0 0;color:#aab3b6;font-size:.9rem;line-height:1.85}
+.exp-hero__actions{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:2.2rem}
+.exp-hero__mark{
+    position:absolute;bottom:40px;right:0;
+    font:700 clamp(3.5rem,7vw,7.5rem)/1 var(--display);
+    letter-spacing:-.04em;color:rgba(255,255,255,.04);
+    pointer-events:none;user-select:none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VEHICLE SELECTOR — grid of featured vehicles
+   ═══════════════════════════════════════════════════════════════ */
+.exp-vehicles{padding:80px 0;border-bottom:1px solid var(--line)}
+.exp-vehicles__header{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:32px;
+    margin-bottom:48px;
+}
+.exp-vehicles__header h2{
+    margin:.8rem 0 0;font:600 clamp(2rem,4vw,3.6rem)/.92 var(--display);
+    letter-spacing:-.05em;color:#fff;
+}
+.exp-vehicles__desc{max-width:360px;color:#899396;font-size:.85rem;line-height:1.7}
+
+.exp-vehicle-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.exp-vehicle-card{
+    position:relative;overflow:hidden;cursor:pointer;
+    border:1px solid var(--line);background:#0d1113;
+    transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease);
+}
+.exp-vehicle-card:hover,.exp-vehicle-card:focus-visible{
+    border-color:rgba(231,51,45,.5);
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
+    transform:translateY(-4px);
+}
+.exp-vehicle-card:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.exp-vehicle-card.is-selected{
+    border-color:var(--signal);
+    box-shadow:0 0 0 1px var(--signal),0 20px 50px rgba(0,0,0,.4);
+}
+.exp-vehicle-card__image{
+    position:relative;aspect-ratio:16/10;overflow:hidden;
+    background:#0b0e10;
+}
+.exp-vehicle-card__image img{
+    width:100%;height:100%;object-fit:cover;
+    filter:brightness(.65) saturate(.5) contrast(1.15);
+    transition:filter .3s var(--ease),transform .4s var(--ease);
+}
+.exp-vehicle-card:hover .exp-vehicle-card__image img{
+    filter:brightness(.75) saturate(.65) contrast(1.1);
+    transform:scale(1.04);
+}
+.exp-vehicle-card__overlay{
+    position:absolute;inset:0;
+    background:linear-gradient(0deg,#0d1113 0%,transparent 50%);
+}
+.exp-vehicle-card__info{padding:16px 18px 18px}
+.exp-vehicle-card__brand{
+    font:700 .58rem var(--display);letter-spacing:.16em;text-transform:uppercase;
+    color:var(--signal);
+}
+.exp-vehicle-card__info h3{
+    margin:6px 0 0;font:600 .88rem/1.3 var(--display);letter-spacing:-.01em;color:#fff;
+}
+.exp-vehicle-card__info p{
+    margin:4px 0 0;color:#6b7578;font-size:.72rem;letter-spacing:.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL PANEL — appears when vehicle is selected
+   ═══════════════════════════════════════════════════════════════ */
+.exp-detail{padding:80px 0;border-bottom:1px solid var(--line)}
+.exp-detail[hidden]{display:none}
+.exp-detail__grid{display:grid;grid-template-columns:1.2fr .8fr;gap:0;min-height:560px}
+
+.exp-detail__visual{position:relative;overflow:hidden;border:1px solid var(--line);background:#0b0e10}
+.exp-detail__image-wrap{position:relative;width:100%;height:100%}
+.exp-detail__image-wrap>img{
+    width:100%;height:100%;object-fit:cover;
+    filter:brightness(.55) saturate(.42) contrast(1.2);
+    transition:opacity .35s var(--ease);
+}
+.exp-detail__grid-overlay{
+    position:absolute;inset:0;
+    background:
+        linear-gradient(90deg,rgba(231,51,45,.12) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+        linear-gradient(0deg,#0b0e10,transparent 58%);
+    background-size:76px 100%,100% 52px,100% 100%;
+}
+.exp-detail__trajectory{
+    position:absolute;inset:0;pointer-events:none;
+}
+.exp-detail__trajectory svg{width:100%;height:100%}
+.exp-detail__trajectory path{
+    fill:none;stroke:var(--signal);stroke-width:1.2;
+    stroke-dasharray:1200;stroke-dashoffset:1200;
+    opacity:.5;
+}
+.exp-detail__trajectory.is-animate path{
+    animation:exp-trace 2.5s var(--ease) forwards;
+}
+@keyframes exp-trace{to{stroke-dashoffset:0}}
+.exp-detail__readout{
+    position:absolute;bottom:20px;left:20px;
+    display:flex;flex-direction:column;gap:3px;
+}
+.exp-detail__readout small{
+    font:600 .55rem var(--display);letter-spacing:.16em;text-transform:uppercase;
+    color:#6b7578;
+}
+.exp-detail__readout strong{
+    font:700 .82rem var(--display);color:#fff;letter-spacing:.06em;
+}
+.exp-detail__source{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:12px 20px;background:#0d1113;border-top:1px solid var(--line);
+    font-size:.68rem;color:#6b7578;
+}
+.exp-detail__source[hidden]{display:none}
+.exp-detail__source-label{font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.exp-detail__source-date{margin-left:auto;font-style:italic;opacity:.7}
+
+.exp-detail__info{
+    display:flex;flex-direction:column;justify-content:center;
+    padding:48px 42px;background:var(--panel);border-left:1px solid var(--line);
+}
+.exp-detail__header h2{
+    margin:.8rem 0 0;font:600 clamp(1.8rem,3.5vw,3rem)/.92 var(--display);
+    letter-spacing:-.04em;color:#fff;
+}
+.exp-detail__kind{
+    margin:.8rem 0 0;font:600 .72rem var(--display);letter-spacing:.1em;
+    color:#aab3b6;text-transform:uppercase;
+}
+
+.exp-detail__specs{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px;
+}
+.exp-spec-card{
+    padding:18px 16px;
+    background:rgba(255,255,255,.03);border:1px solid var(--line);
+    transition:border-color .2s var(--ease);
+}
+.exp-spec-card:hover{border-color:rgba(231,51,45,.35)}
+.exp-spec-card small{
+    display:block;font:600 .55rem var(--display);letter-spacing:.14em;
+    text-transform:uppercase;color:#6b7578;
+}
+.exp-spec-card strong{
+    display:block;margin:6px 0 0;font:700 1.1rem var(--display);color:#fff;
+}
+.exp-spec-card span{
+    display:block;margin:4px 0 0;font-size:.68rem;color:#899396;line-height:1.5;
+}
+
+.exp-detail__actions{
+    display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:28px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3D VIEWER — immersive canvas section
+   ═══════════════════════════════════════════════════════════════ */
+.exp-3d-section{padding:80px 0;border-bottom:1px solid var(--line)}
+.exp-3d__header{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:32px;
+    margin-bottom:40px;
+}
+.exp-3d__header h2{
+    margin:.8rem 0 0;font:600 clamp(2rem,4vw,3.6rem)/.92 var(--display);
+    letter-spacing:-.05em;color:#fff;
+}
+.exp-3d__header p{max-width:400px;color:#899396;font-size:.85rem;line-height:1.7}
+
+.exp-3d-viewer{
+    position:relative;width:100%;aspect-ratio:16/8;min-height:480px;
+    overflow:hidden;background:#080a0c;border:1px solid var(--line);
+    margin-bottom:24px;
+}
+.exp-3d-viewer canvas{
+    display:block;width:100%;height:100%;
+    cursor:grab;
+}
+.exp-3d-viewer canvas:active{cursor:grabbing}
+
+/* Controls */
+.exp-3d-controls{
+    position:absolute;top:16px;right:16px;
+    display:flex;flex-direction:column;gap:8px;z-index:5;
+}
+.exp-3d-btn{
+    display:grid;place-items:center;width:40px;height:40px;
+    background:rgba(16,19,21,.85);border:1px solid rgba(255,255,255,.12);
+    color:#aab3b6;backdrop-filter:blur(8px);cursor:pointer;
+    transition:all .2s var(--ease);
+}
+.exp-3d-btn:hover{background:rgba(231,51,45,.85);color:#fff;border-color:var(--signal)}
+.exp-3d-btn svg{width:18px;height:18px}
+.exp-3d-btn.is-active{background:var(--signal);color:#fff;border-color:var(--signal)}
+
+/* Presets */
+.exp-3d-presets{
+    position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+    display:flex;gap:6px;z-index:5;
+}
+.exp-3d-preset{
+    padding:8px 18px;
+    background:rgba(16,19,21,.8);border:1px solid rgba(255,255,255,.12);
+    color:#aab3b6;font:600 .65rem var(--display);letter-spacing:.08em;
+    text-transform:uppercase;cursor:pointer;backdrop-filter:blur(8px);
+    transition:all .2s var(--ease);
+}
+.exp-3d-preset:hover{background:rgba(231,51,45,.2);color:#fff;border-color:rgba(231,51,45,.5)}
+.exp-3d-preset.is-active{background:var(--signal);color:#fff;border-color:var(--signal)}
+
+/* Loading */
+.exp-3d-loading{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:16px;
+    background:rgba(8,10,12,.92);z-index:10;
+    transition:opacity .4s var(--ease);
+}
+.exp-3d-loading[hidden]{display:none;opacity:0;pointer-events:none}
+.exp-3d-spinner{
+    width:36px;height:36px;border:2px solid rgba(255,255,255,.1);
+    border-top-color:var(--signal);border-radius:50%;
+    animation:exp-spin .8s linear infinite;
+}
+@keyframes exp-spin{to{transform:rotate(360deg)}}
+.exp-3d-loading p{color:#6b7578;font-size:.75rem;letter-spacing:.06em}
+.exp-3d-loading-pct{font:600 .72rem var(--display,"Space Grotesk",sans-serif);color:rgba(255,255,255,.55);letter-spacing:.1em}
+
+/* Error overlay */
+.exp-3d-error{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;text-align:center;
+    background:rgba(8,10,12,.92);z-index:11;padding:24px;
+}
+.exp-3d-error[hidden]{display:none}
+.exp-3d-error h4{margin:0;font:600 1.1rem var(--display,"Space Grotesk",sans-serif);color:#fff;letter-spacing:.02em}
+.exp-3d-error p{margin:0;color:#6b7578;font-size:.78rem;letter-spacing:.04em;max-width:420px}
+
+/* Hotspot info popup */
+.exp-3d-hotspot-info{
+    position:absolute;top:16px;left:16px;max-width:320px;
+    background:rgba(16,19,21,.94);border:1px solid var(--line);
+    padding:20px;backdrop-filter:blur(12px);z-index:8;
+    animation:exp-fadeIn .25s var(--ease);
+}
+.exp-3d-hotspot-info[hidden]{display:none}
+.exp-hotspot-close{
+    position:absolute;top:8px;right:10px;background:none;border:0;
+    color:#6b7578;font-size:1rem;cursor:pointer;
+}
+.exp-hotspot-close:hover{color:#fff}
+.exp-3d-hotspot-info h4{
+    margin:0 0 8px;font:600 .82rem var(--display);color:#fff;
+}
+.exp-3d-hotspot-info p{
+    margin:0;color:#aab3b6;font-size:.78rem;line-height:1.7;
+}
+
+/* Legend */
+.exp-3d-legend{
+    display:flex;align-items:center;justify-content:center;gap:28px;
+    padding:16px 0;
+}
+.exp-legend-item{display:flex;align-items:center;gap:8px;color:#6b7578;font-size:.72rem}
+.exp-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ═══════════════════════════════════════════════════════════════
+   CATEGORIES — 7 experience areas
+   ═══════════════════════════════════════════════════════════════ */
+.exp-categories{padding:80px 0;border-bottom:1px solid var(--line)}
+.exp-categories__header{
+    text-align:center;margin-bottom:56px;
+}
+.exp-categories__header h2{
+    margin:.8rem 0 0;font:600 clamp(2rem,4vw,3.6rem)/.92 var(--display);
+    letter-spacing:-.05em;color:#fff;
+}
+
+.exp-cat-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;
+}
+.exp-cat-card{
+    padding:32px 28px;border:1px solid var(--line);background:#0d1113;
+    transition:border-color .25s var(--ease),transform .25s var(--ease);
+}
+.exp-cat-card:hover{border-color:rgba(231,51,45,.4);transform:translateY(-3px)}
+.exp-cat-card__number{
+    font:700 2.4rem/1 var(--display);letter-spacing:-.04em;
+    color:rgba(231,51,45,.2);margin-bottom:12px;
+}
+.exp-cat-card h3{
+    margin:0 0 10px;font:600 1.05rem/1.3 var(--display);color:#fff;
+}
+.exp-cat-card p{
+    margin:0 0 16px;color:#899396;font-size:.82rem;line-height:1.7;
+}
+.exp-cat-card__tags{display:flex;flex-wrap:wrap;gap:6px}
+.exp-cat-card__tags span{
+    padding:4px 10px;font:600 .58rem var(--display);letter-spacing:.08em;
+    text-transform:uppercase;color:#6b7578;
+    border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHOWROOM — environment cards
+   ═══════════════════════════════════════════════════════════════ */
+.exp-showroom{padding:80px 0;border-bottom:1px solid var(--line)}
+.exp-showroom__header{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:32px;
+    margin-bottom:48px;
+}
+.exp-showroom__header h2{
+    margin:.8rem 0 0;font:600 clamp(2rem,4vw,3.6rem)/.92 var(--display);
+    letter-spacing:-.05em;color:#fff;
+}
+.exp-showroom__header p{max-width:360px;color:#899396;font-size:.85rem;line-height:1.7}
+
+.exp-showroom__grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.exp-showroom-card{
+    padding:32px 24px;border:1px solid var(--line);background:#0d1113;
+    transition:border-color .25s var(--ease),transform .25s var(--ease);
+}
+.exp-showroom-card:hover{border-color:rgba(231,51,45,.4);transform:translateY(-3px)}
+.exp-showroom-card__icon{
+    display:grid;place-items:center;width:48px;height:48px;margin-bottom:18px;
+    border:1px solid rgba(231,51,45,.35);color:var(--signal);
+}
+.exp-showroom-card__icon svg{width:22px;height:22px}
+.exp-showroom-card h3{
+    margin:0 0 10px;font:600 .92rem/1.3 var(--display);color:#fff;
+}
+.exp-showroom-card p{margin:0;color:#899396;font-size:.8rem;line-height:1.7}
+
+/* ═══════════════════════════════════════════════════════════════
+   CTA — matches existing appointment section
+   ═══════════════════════════════════════════════════════════════ */
+.exp-cta{
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+    padding:72px 0;
+    background:
+        radial-gradient(circle at 77% 15%,rgba(231,51,45,.12),transparent 20%),
+        linear-gradient(130deg,#101315,#0b0e10 62%);
+}
+.exp-cta h2{
+    margin:1rem 0 0;font:600 clamp(1.8rem,3.5vw,3.2rem)/.92 var(--display);
+    letter-spacing:-.04em;color:#fff;
+}
+.exp-cta p{color:#899396;font-size:.88rem;line-height:1.8}
+.exp-cta .button,.exp-cta .text-action{margin-top:1.5rem}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes exp-fadeIn{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:none}
+}
+
+/* Reveal base (inherits from site.css .reveal) */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.is-visible{opacity:1;transform:none}
+.reveal--delay-1{transition-delay:.12s}
+.reveal--delay-2{transition-delay:.24s}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tablet */
+@media(max-width:1024px){
+    .exp-hero{min-height:680px}
+    .exp-hero__content{min-height:680px}
+    .exp-vehicle-grid{grid-template-columns:repeat(2,1fr)}
+    .exp-detail__grid{grid-template-columns:1fr}
+    .exp-detail__visual{min-height:360px}
+    .exp-showroom__grid{grid-template-columns:repeat(2,1fr)}
+    .exp-3d-viewer{aspect-ratio:16/10;min-height:400px}
+}
+
+/* Small tablet */
+@media(max-width:768px){
+    .exp-vehicles__header{flex-direction:column;align-items:flex-start;gap:12px}
+    .exp-3d__header{flex-direction:column;align-items:flex-start;gap:12px}
+    .exp-showroom__header{flex-direction:column;align-items:flex-start;gap:12px}
+    .exp-cta{grid-template-columns:1fr;gap:24px}
+    .exp-detail__specs{grid-template-columns:1fr 1fr}
+}
+
+/* Mobile */
+@media(max-width:600px){
+    .exp-hero{min-height:600px}
+    .exp-hero__content{min-height:600px;padding:100px 0 60px}
+    .exp-hero__mark{font-size:2.5rem;bottom:20px}
+    .exp-vehicle-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .exp-cat-grid{grid-template-columns:1fr}
+    .exp-showroom__grid{grid-template-columns:1fr}
+    .exp-detail__specs{grid-template-columns:1fr}
+    .exp-3d-viewer{aspect-ratio:4/3;min-height:320px}
+    .exp-3d-presets{flex-wrap:wrap;justify-content:center}
+    .exp-3d-preset{padding:6px 12px;font-size:.6rem}
+    .exp-3d-controls{top:10px;right:10px}
+    .exp-3d-btn{width:34px;height:34px}
+    .exp-3d-btn svg{width:15px;height:15px}
+    .exp-3d-legend{flex-direction:column;gap:8px}
+    .exp-3d-hotspot-info{max-width:calc(100% - 32px);left:16px;right:16px}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+    .exp-hero__sweep{animation:none}
+    .exp-detail__trajectory path{animation:none;stroke-dashoffset:0}
+    .reveal{transition-duration:.01ms}
+    .exp-3d-spinner{animation-duration:2s}
+    .exp-vehicle-card:hover,.exp-cat-card:hover,.exp-showroom-card:hover{transform:none}
+}

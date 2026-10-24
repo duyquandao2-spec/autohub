@@ -1,0 +1,28 @@
+@{
+    var current = (int)ViewData["CurrentPage"]!;
+    var total = (int)ViewData["TotalPages"]!;
+    var baseUrl = (string)ViewData["BaseUrl"]!;
+    var q = (System.Collections.Generic.IReadOnlyDictionary<string, string?>)ViewData["Query"]!;
+    string Q(int? page)
+    {
+        var parts = new System.Collections.Generic.List<string>();
+        foreach (var kv in q)
+        {
+            if (!string.IsNullOrEmpty(kv.Value))
+                parts.Add(System.Net.WebUtility.UrlEncode(kv.Key) + "=" + System.Net.WebUtility.UrlEncode(kv.Value));
+        }
+        if (page.HasValue) parts.Add("page=" + page);
+        return parts.Count == 0 ? baseUrl : baseUrl + "?" + string.Join("&", parts);
+    }
+}
+@if (total > 1)
+{
+    <nav class="pager" aria-label="Phân trang">
+        <a class="pager__btn @(current <= 1 ? "is-disabled" : "")" href="@Q(current - 1)">‹</a>
+        @for (var i = 1; i <= total; i++)
+        {
+            <a class="pager__btn @(i == current ? "is-current" : "")" href="@Q(i)">@i</a>
+        }
+        <a class="pager__btn @(current >= total ? "is-disabled" : "")" href="@Q(current + 1)">›</a>
+    </nav>
+}

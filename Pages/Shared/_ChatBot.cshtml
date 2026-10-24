@@ -1,0 +1,33 @@
+<div class="chatbot" data-chatbot>
+    <div class="chatbot__window" role="dialog" aria-labelledby="chatbot-title" aria-modal="false">
+        <div class="chatbot__header">
+            <div class="chatbot__header-logo">
+                <svg class="chatbot__robot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 8V4H8"/>
+                    <rect width="16" height="12" x="4" y="8" rx="2"/>
+                    <path d="M2 14h2"/>
+                    <path d="M20 14h2"/>
+                    <path d="M15 13v2"/>
+                    <path d="M9 13v2"/>
+                </svg>
+            </div>
+            <div class="chatbot__header-info">
+                <span class="chatbot__title" id="chatbot-title">APEX AI</span>
+                <span class="chatbot__subtitle">Tr&#7907; l&#253; APEX MOTORS</span>
+            </div>
+            <div class="chatbot__header-actions">
+                <button class="chatbot__close" type="button" data-chatbot-close aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot__messages" data-chatbot-messages aria-live="polite"></div>
+        <div class="chatbot__actions" data-chatbot-actions></div>
+        <div class="chatbot__input-area">
+            <textarea class="chatbot__input" data-chatbot-input placeholder="B&#7841;n mu&#7889;n t&#236;m hi&#7875;u g&#236; v&#7873; xe?" aria-label="Message input" rows="1"></textarea>
+            <button class="chatbot__send" data-chatbot-send aria-label="Send" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="m22 2-11 11"/></svg>
+            </button>
+        </div>
+    </div>
+</div>

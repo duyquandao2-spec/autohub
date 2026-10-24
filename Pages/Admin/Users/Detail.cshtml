@@ -1,0 +1,57 @@
+@page
+@model AutoHub.Pages.Admin.Users.DetailModel
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    ViewData["AdminBreadcrumb"] = $"Người dùng · {Model.User!.FullName}";
+    var u = Model.User;
+}
+<div class="apx-bar">
+    <a class="apx-btn apx-btn--ghost" asp-page="/admin/users/index">← Danh sách</a>
+    @if (u.Id != Model.CurrentUserId)
+    {
+        <form method="post" asp-page-handler="Deactivate">
+            <input type="hidden" name="Id" value="@u.Id" />
+            <input type="hidden" name="deactivate" value="@(!u.IsDeactivated)" />
+            <button class="apx-btn apx-btn--danger" type="submit" data-confirm="Bạn có chắc chắn?">@(u.IsDeactivated ? "Kích hoạt lại" : "Vô hiệu hóa")</button>
+        </form>
+    }
+</div>
+
+<div class="apx-detail">
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Thông tin</h2></div>
+        <div class="apx-kv" style="padding:18px 20px">
+            <div class="apx-kv__item"><dt>Họ tên</dt><dd>@u.FullName</dd></div>
+            <div class="apx-kv__item"><dt>Email</dt><dd>@u.Email</dd></div>
+            <div class="apx-kv__item"><dt>Điện thoại</dt><dd>@(u.Phone ?? "—")</dd></div>
+            <div class="apx-kv__item"><dt>Ngày tham gia</dt><dd>@u.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd></div>
+            <div class="apx-kv__item"><dt>Email xác nhận</dt><dd>@(u.EmailConfirmed ? "Có" : "Chưa")</dd></div>
+            <div class="apx-kv__item"><dt>Phương thức liên hệ</dt><dd>@(Model.Profile?.PreferredContactMethod ?? "—")</dd></div>
+            <div class="apx-kv__item"><dt>Đồng ý tiếp thị</dt><dd>@(Model.Profile?.MarketingConsent == true ? "Có" : "Không")</dd></div>
+            <div class="apx-kv__item"><dt>Trạng thái</dt><dd>@(u.IsDeactivated ? "Vô hiệu hóa" : "Hoạt động")</dd></div>
+        </div>
+    </div>
+
+    <div class="apx-panel">
+        <div class="apx-panel__head"><h2>Vai trò</h2></div>
+        <div style="padding:18px 20px">
+            <p class="text-m" style="margin:0 0 12px">
+                Hiện tại: @string.Join(", ", u.Roles)
+            </p>
+            @if (u.Id != Model.CurrentUserId)
+            {
+                <form method="post" asp-page-handler="Role">
+                    <input type="hidden" name="Id" value="@u.Id" />
+                    <select class="apx-select" name="Role" style="width:100%;margin-bottom:12px">
+                        @foreach (var r in AutoHub.Pages.Admin.Users.IndexModel.AssignableRoles)
+                        {
+                            <option value="@r" selected="@(u.Roles.Contains(r))">@r</option>
+                        }
+                    </select>
+                    <button class="apx-btn" type="submit">Cập nhật vai trò</button>
+                </form>
+                <p class="muted" style="font-size:.68rem;margin-top:10px">SuperAdmin/Administrator không thể gán qua giao diện.</p>
+            }
+        </div>
+    </div>
+</div>

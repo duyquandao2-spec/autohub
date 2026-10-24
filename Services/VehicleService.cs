@@ -8,11 +8,13 @@ namespace AutoHub.Services;
 public interface IVehicleService
 {
     IReadOnlyList<Vehicle> GetVehicles(string? brand = null);
-    PaginationResult<Vehicle> GetVehiclesPaged(int page, int pageSize, string? brand = null, string? search = null);
-    IReadOnlyList<string> GetBrands();
+    PaginationResult<Vehicle> GetVehiclesPaged(int page, int pageSize, string? brand = null, string? search = null, string? flag = null);
+    IReadOnlyList<BrandItem> GetBrandItems();
     Vehicle? GetVehicleBySlug(string slug);
     IReadOnlyList<Vehicle> Search(string query);
 }
+
+public sealed record BrandItem(string Name, string Slug, string? LogoPath);
 
 public sealed class VehicleService : IVehicleService
 {
@@ -115,11 +117,23 @@ public sealed class VehicleService : IVehicleService
     }
 
     private static IQueryable<VehicleVariantEntity> ApplyFilters(
-        IQueryable<VehicleVariantEntity> query, string? brand, string? search)
+        IQueryable<VehicleVariantEntity> query, string? brand, string? search, string? flag = null)
     {
         if (!string.IsNullOrWhiteSpace(brand) && !brand.Equals("ALL", StringComparison.OrdinalIgnoreCase))
         {
             query = query.Where(v => v.Model.Brand.Name == brand);
+        }
+
+        if (!string.IsNullOrWhiteSpace(flag))
+        {
+            query = flag.ToLowerInvariant() switch
+            {
+                "featured" => query.Where(v => v.IsFeatured),
+                "new" => query.Where(v => v.IsNewArrival),
+                "popular" => query.Where(v => v.IsPopular),
+                "ev" => query.Where(v => v.FuelType.Slug == "ev"),
+                _ => query,
+            };
         }
 
         if (!string.IsNullOrWhiteSpace(search))
@@ -145,16 +159,12 @@ public sealed class VehicleService : IVehicleService
         try
         {
             var query = BaseQuery();
-
-            if (!string.IsNullOrWhiteSpace(brand) && !brand.Equals("ALL", StringComparison.OrdinalIgnoreCase))
-            {
-                query = query.Where(v => v.Model.Brand.Name == brand);
-            }
+            query = ApplyFilters(query, brand, null);
 
             return query
                 .OrderByDescending(v => v.IsFeatured)
                 .ThenByDescending(v => v.VariantId)
-                .Select(v => ProjectToVehicle(v))
+                .Select(ProjectToVehicle)
                 .ToList();
         }
         catch (Exception ex)
@@ -164,7 +174,7 @@ public sealed class VehicleService : IVehicleService
         }
     }
 
-    public PaginationResult<Vehicle> GetVehiclesPaged(int page, int pageSize, string? brand = null, string? search = null)
+    public PaginationResult<Vehicle> GetVehiclesPaged(int page, int pageSize, string? brand = null, string? search = null, string? flag = null)
     {
         if (!IsDbAvailable()) return new PaginationResult<Vehicle> { CurrentPage = page, PageSize = pageSize };
 
@@ -173,7 +183,7 @@ public sealed class VehicleService : IVehicleService
             pageSize = Math.Clamp(pageSize, 1, 50);
 
             var query = BaseQuery();
-            query = ApplyFilters(query, brand, search);
+            query = ApplyFilters(query, brand, search, flag);
 
             var orderedQuery = query
                 .OrderByDescending(v => v.IsFeatured)
@@ -199,7 +209,7 @@ public sealed class VehicleService : IVehicleService
             var items = orderedQuery
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(v => ProjectToVehicle(v))
+                .Select(ProjectToVehicle)
                 .ToList();
 
             return new PaginationResult<Vehicle>
@@ -218,21 +228,28 @@ public sealed class VehicleService : IVehicleService
         }
     }
 
-    public IReadOnlyList<string> GetBrands()
+    public IReadOnlyList<BrandItem> GetBrandItems()
     {
         if (!IsDbAvailable()) return [];
 
         try
         {
-            return _db.Brands
-                .Where(b => b.IsActive)
+            var rows = _db.Brands
+                .AsNoTracking()
+                .Where(b => b.IsActive && b.Models.Any(m => m.Variants.Any()))
                 .OrderBy(b => b.Name)
-                .Select(b => b.Name)
+                .Select(b => new { b.Name, b.Slug, b.LogoPath })
+                .ToList();
+
+            return rows
+                .GroupBy(b => b.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+                .Select(g => g.First())
+                .Select(b => new BrandItem(b.Name, b.Slug, b.LogoPath))
                 .ToList();
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Khong the truy van brands");
+            _logger.LogWarning(ex, "Khong the truy van brand items");
             return [];
         }
     }
@@ -260,18 +277,8 @@ public sealed class VehicleService : IVehicleService
 
         try
         {
-            var terms = query.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            return BaseQuery()
-                .Where(v => terms.All(term =>
-                    v.Model.Brand.Name.Contains(term) ||
-                    v.Model.Name.Contains(term) ||
-                    v.VariantName.Contains(term) ||
-                    (v.Model.BodyType != null && v.Model.BodyType.Name.Contains(term)) ||
-                    v.FuelType.Name.Contains(term) ||
-                    v.DriveType.Name.Contains(term) ||
-                    (v.Description != null && v.Description.Contains(term))))
-                .Select(v => ProjectToVehicle(v))
+            return ApplyFilters(BaseQuery(), null, query)
+                .Select(ProjectToVehicle)
                 .ToList();
         }
         catch (Exception ex)

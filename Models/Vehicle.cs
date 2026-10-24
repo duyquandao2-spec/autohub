@@ -25,9 +25,7 @@ public class Vehicle
     public int? Power { get; set; }
     public decimal? FuelEconomy { get; set; }
     public string? Range { get; set; }
-    public string? Charging { get; set; }
     public string? FastCharging { get; set; }
-    public string? Model3DUrl { get; set; }
     public bool IsFeatured { get; set; }
     public bool IsNewArrival { get; set; }
     public bool IsPopular { get; set; }

@@ -115,26 +115,26 @@ public static class AutoHubSeeder
     private static async Task<Dictionary<string, BrandEntity>> SeedBrands(AutoHubDbContext db)
     {
         var data = new[] {
-            ("BMW", "bmw", "Germany", "https://www.bmw.com"),
-            ("Mercedes-Benz", "mercedes-benz", "Germany", "https://www.mercedes-benz.com"),
-            ("Audi", "audi", "Germany", "https://www.audi.com"),
-            ("Toyota", "toyota", "Japan", "https://www.toyota.com"),
-            ("Honda", "honda", "Japan", "https://www.honda.com"),
-            ("Mazda", "mazda", "Japan", "https://www.mazda.com"),
-            ("Lexus", "lexus", "Japan", "https://www.lexus.com"),
-            ("Porsche", "porsche", "Germany", "https://www.porsche.com"),
-            ("Volvo", "volvo", "Sweden", "https://www.volvo.com"),
-            ("Ford", "ford", "USA", "https://www.ford.com"),
-            ("VinFast", "vinfast", "Vietnam", "https://www.vinfast.vn"),
-            ("Hyundai", "hyundai", "South Korea", "https://www.hyundai.com"),
-            ("Kia", "kia", "South Korea", "https://www.kia.com"),
-            ("Volkswagen", "volkswagen", "Germany", "https://www.volkswagen.com"),
-            ("Nissan", "nissan", "Japan", "https://www.nissan-global.com"),
+            ("BMW", "bmw", "Germany", "https://www.bmw.com", "/Images/Brands/bmw.svg"),
+            ("Mercedes-Benz", "mercedes-benz", "Germany", "https://www.mercedes-benz.com", "/Images/Brands/mercedes-benz.svg"),
+            ("Audi", "audi", "Germany", "https://www.audi.com", "/Images/Brands/audi.svg"),
+            ("Toyota", "toyota", "Japan", "https://www.toyota.com", "/Images/Brands/toyota.svg"),
+            ("Honda", "honda", "Japan", "https://www.honda.com", "/Images/Brands/honda.svg"),
+            ("Mazda", "mazda", "Japan", "https://www.mazda.com", "/Images/Brands/mazda.svg"),
+            ("Lexus", "lexus", "Japan", "https://www.lexus.com", "/Images/Brands/lexus.svg"),
+            ("Porsche", "porsche", "Germany", "https://www.porsche.com", "/Images/Brands/porsche.svg"),
+            ("Volvo", "volvo", "Sweden", "https://www.volvo.com", "/Images/Brands/volvo.svg"),
+            ("Ford", "ford", "USA", "https://www.ford.com", "/Images/Brands/ford.svg"),
+            ("VinFast", "vinfast", "Vietnam", "https://www.vinfast.vn", "/Images/Brands/vinfast.svg"),
+            ("Hyundai", "hyundai", "South Korea", "https://www.hyundai.com", "/Images/Brands/hyundai.svg"),
+            ("Kia", "kia", "South Korea", "https://www.kia.com", "/Images/Brands/kia.svg"),
+            ("Volkswagen", "volkswagen", "Germany", "https://www.volkswagen.com", "/Images/Brands/volkswagen.svg"),
+            ("Nissan", "nissan", "Japan", "https://www.nissan-global.com", "/Images/Brands/nissan.svg"),
         };
         var dict = new Dictionary<string, BrandEntity>();
-        foreach (var (name, slug, country, url) in data)
+        foreach (var (name, slug, country, url, logo) in data)
         {
-            var e = new BrandEntity { Name = name, Slug = slug, Country = country, WebsiteUrl = url };
+            var e = new BrandEntity { Name = name, Slug = slug, Country = country, WebsiteUrl = url, LogoPath = logo };
             db.Brands.Add(e);
             dict[slug] = e;
         }

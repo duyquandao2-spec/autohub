@@ -1,0 +1,60 @@
+@page
+@model AutoHub.Pages.Admin.TestDrives.IndexModel
+@{
+    ViewData["Title"] = "Lịch lái thử";
+    ViewData["AdminBreadcrumb"] = "Lịch lái thử";
+    ViewData["CurrentPage"] = Model.Paged.CurrentPage;
+    ViewData["TotalPages"] = Model.Paged.TotalPages == 0 ? 1 : Model.Paged.TotalPages;
+    ViewData["BaseUrl"] = "/admin/testdrives";
+    ViewData["Query"] = new Dictionary<string, string?> { ["status"] = Model.Status, ["showroom"] = Model.Showroom?.ToString(), ["search"] = Model.Search };
+}
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <select class="apx-select" name="status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="PENDING" selected="@(Model.Status == "PENDING")">Chờ duyệt</option>
+            <option value="CONFIRMED" selected="@(Model.Status == "CONFIRMED")">Đã xác nhận</option>
+            <option value="COMPLETED" selected="@(Model.Status == "COMPLETED")">Hoàn tất</option>
+            <option value="CANCELLED" selected="@(Model.Status == "CANCELLED")">Hủy</option>
+        </select>
+        <select class="apx-select" name="showroom">
+            <option value="">Tất cả showroom</option>
+            @foreach (var s in Model.Showrooms)
+            {
+                <option value="@s.Id" selected="@(Model.Showroom == s.Id)">@s.Name</option>
+            }
+        </select>
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo tên, điện thoại, email..." />
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn apx-btn--ghost" asp-page="/admin/testdrives/index">Đặt lại</a>
+    </form>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Khách hàng</th><th>Xe</th><th>Ngày · Giờ</th><th>Showroom</th><th>Trạng thái</th><th>Ngày đặt</th></tr></thead>
+            <tbody>
+                @if (Model.Paged.Items.Count == 0)
+                {
+                    <tr><td colspan="6" class="muted">Không có lịch lái thử nào.</td></tr>
+                }
+                @foreach (var t in Model.Paged.Items)
+                {
+                    <tr>
+                        <td><a asp-page="/admin/testdrives/detail" asp-route-id="@t.BookingId">@t.FullName</a><br /><span class="muted">@t.Phone</span></td>
+                        <td>@(t.VehicleName ?? "—")</td>
+                        <td>@t.PreferredDate.ToString("dd/MM/yyyy") · @t.TimeSlot</td>
+                        <td>@(t.ShowroomName ?? "—")</td>
+                        <td><span class="badge badge--@AutoHub.Services.StatusWorkflow.BadgeClass(t.Status)">@AutoHub.Services.StatusWorkflow.Label(t.Status)</span></td>
+                        <td class="muted">@t.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Paged.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

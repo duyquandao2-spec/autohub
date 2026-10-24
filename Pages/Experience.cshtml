@@ -1,0 +1,368 @@
+@page
+@model ExperienceModel
+@{
+    ViewData["Title"] = "Trải nghiệm — AUTOHUB";
+    var hero = Model.HeroVehicle;
+}
+
+<main class="exp-page">
+
+    @* ── Hero — cinematic fullscreen, same design language as Index ── *@
+    <section class="exp-hero" data-exp-hero>
+        <div class="exp-hero__bg" aria-hidden="true">
+            <div class="exp-hero__grid"></div>
+            <div class="exp-hero__vignette"></div>
+            <div class="exp-hero__sweep"></div>
+        </div>
+        <div class="shell exp-hero__content">
+            <div class="exp-hero__copy reveal">
+                <p class="eyebrow">Trải nghiệm showroom · 2026</p>
+                <h1>CHUYỂN ĐỘNG<br /><span class="exp-hero__subtitle">KHÔNG GIỚI HẠN.</span></h1>
+                <p class="exp-hero__lede">Một không gian tương tác để cảm nhận thiết kế, hiệu năng và công nghệ của từng cỗ máy — từ mọi góc nhìn.</p>
+                <div class="exp-hero__actions">
+                    <a class="button button--light" href="#exp-vehicles">Chọn xe trải nghiệm <span>→</span></a>
+                    <a class="text-action" href="#exp-3d">Xem 3D <span class="circle-icon">›</span></a>
+                </div>
+            </div>
+            <div class="exp-hero__mark" aria-hidden="true">TRẢI NGHIỆM</div>
+        </div>
+    </section>
+
+    @* ── Featured Vehicle Selector ── *@
+    <section id="exp-vehicles" class="exp-vehicles">
+        <div class="shell">
+            <div class="exp-vehicles__header reveal">
+                <div>
+                    <p class="eyebrow">Tuyển chọn trải nghiệm</p>
+                    <h2>Chọn cỗ máy<br />để cảm nhận.</h2>
+                </div>
+                <p class="exp-vehicles__desc">Mỗi chiếc xe mang một câu chuyện riêng. Chọn một mẫu để bắt đầu hành trình trải nghiệm.</p>
+            </div>
+
+            <div class="exp-vehicle-grid reveal reveal--delay-1" data-vehicle-selector>
+                @foreach (var vehicle in Model.FeaturedVehicles)
+                {
+                    <article class="exp-vehicle-card"
+                             data-vehicle-card
+                             data-slug="@vehicle.Slug"
+                             data-name="@vehicle.Name"
+                             data-brand="@vehicle.BrandName"
+                             data-model="@vehicle.Model"
+                             data-variant="@vehicle.Variant"
+                             data-image="@vehicle.ImagePath"
+                             data-power="@vehicle.PowerDisplay"
+                             data-accel="@vehicle.AccelerationDisplay"
+                             data-speed="@vehicle.TopSpeedDisplay"
+                             data-fuel="@(vehicle.FuelType == "EV" ? vehicle.Range : vehicle.FuelEconomyDisplay)"
+                             data-price="@vehicle.PriceDisplay"
+                             data-fueltype="@vehicle.FuelType"
+                             data-category="@vehicle.Category"
+                             data-drivetrain="@vehicle.Drivetrain"
+                             data-seats="@vehicle.Seats"
+                             tabindex="0"
+                             role="button"
+                             aria-label="Trải nghiệm @vehicle.Name">
+                        <div class="exp-vehicle-card__image">
+                            <img src="@vehicle.ImagePath" alt="@vehicle.Name" loading="lazy" />
+                            <div class="exp-vehicle-card__overlay"></div>
+                        </div>
+                        <div class="exp-vehicle-card__info">
+                            <span class="exp-vehicle-card__brand">@vehicle.BrandName</span>
+                            <h3>@vehicle.Name</h3>
+                            <p>@vehicle.Category · @vehicle.Drivetrain</p>
+                        </div>
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ── Active Vehicle Detail Panel ── *@
+    <section class="exp-detail" id="exp-detail" data-exp-detail hidden>
+        <div class="shell">
+            <div class="exp-detail__grid">
+                <div class="exp-detail__visual reveal">
+                    <div class="exp-detail__image-wrap">
+                        <img data-exp-image src="" alt="" />
+                        <div class="exp-detail__grid-overlay"></div>
+                        <div class="exp-detail__readout">
+                            <small>ACTIVE VEHICLE</small>
+                            <strong data-exp-readout-name></strong>
+                        </div>
+                        <div class="exp-detail__trajectory" aria-hidden="true">
+                            <svg viewBox="0 0 700 560" preserveAspectRatio="none"><path d="M-10 472 C138 518 226 175 400 276 S544 518 720 70" /></svg>
+                        </div>
+                    </div>
+                    <div class="exp-detail__source" data-exp-source hidden>
+                        <span class="exp-detail__source-label">Nguồn:</span>
+                        <span data-exp-source-name></span>
+                        <span class="exp-detail__source-date">Xác minh: 25/08/2026</span>
+                    </div>
+                </div>
+
+                <div class="exp-detail__info reveal reveal--delay-1">
+                    <div class="exp-detail__header">
+                        <p class="eyebrow" data-exp-brand-code></p>
+                        <h2 data-exp-name></h2>
+                        <p class="exp-detail__kind" data-exp-kind></p>
+                    </div>
+
+                    <div class="exp-detail__specs">
+                        <div class="exp-spec-card">
+                            <small>CÔNG SUẤT</small>
+                            <strong data-exp-power></strong>
+                            <span>Đỉnh công suất khả dụng</span>
+                        </div>
+                        <div class="exp-spec-card">
+                            <small>0 — 100 KM/H</small>
+                            <strong data-exp-accel></strong>
+                            <span>Phản hồi từ trạng thái đứng yên</span>
+                        </div>
+                        <div class="exp-spec-card">
+                            <small>TỐC ĐỘ CỰC ĐẠI</small>
+                            <strong data-exp-speed></strong>
+                            <span>Giới hạn điện tử theo cấu hình</span>
+                        </div>
+                        <div class="exp-spec-card">
+                            <small data-exp-fuel-label></small>
+                            <strong data-exp-fuel></strong>
+                            <span data-exp-fuel-desc></span>
+                        </div>
+                        <div class="exp-spec-card">
+                            <small>HỆ DẪN ĐỘNG</small>
+                            <strong data-exp-drivetrain></strong>
+                            <span data-exp-seats></span>
+                        </div>
+                        <div class="exp-spec-card">
+                            <small>GIÁ THAM KHẢO</small>
+                            <strong data-exp-price></strong>
+                            <span>Đã gồm cấu hình tiêu chuẩn</span>
+                        </div>
+                    </div>
+
+                    <div class="exp-detail__actions">
+                        <a class="button button--signal" href="/TestDrive" data-exp-testdrive>Đặt lịch lái thử <span>→</span>
+                        </a>
+                        <a class="text-action" href="/Vehicles/" data-exp-detail-link>Xem chi tiết xe <span class="circle-icon">↗</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── 3D Interactive Viewer ── *@
+    <section id="exp-3d" class="exp-3d-section">
+        <div class="shell">
+            <div class="exp-3d__header reveal">
+                <div>
+                    <p class="eyebrow">Tương tác 3D</p>
+                    <h2>Cảm nhận từ<br />mọi góc nhìn.</h2>
+                </div>
+                <p>Di chuyển chuột để xoay, cuộn để thu phóng. Chạm vào các điểm nhấn để khám phá chi tiết.</p>
+            </div>
+        </div>
+
+        <div class="exp-3d-viewer reveal reveal--delay-1" data-3d-viewer>
+            <canvas data-3d-canvas aria-label="Trình xem xe 3D tương tác"></canvas>
+
+            <div class="exp-3d-controls" role="toolbar" aria-label="Điều khiển 3D">
+                <button type="button" class="exp-3d-btn" data-3d-reset aria-label="Đặt lại góc nhìn" title="Đặt lại">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+                <button type="button" class="exp-3d-btn" data-3d-zoom-in aria-label="Thu nhỏ" title="Thu nhỏ">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>
+                </button>
+                <button type="button" class="exp-3d-btn" data-3d-zoom-out aria-label="Phóng to" title="Phóng to">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6"/></svg>
+                </button>
+                <button type="button" class="exp-3d-btn" data-3d-auto-rotate aria-label="Tự động xoay" title="Tự động xoay">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v5h-5"/></svg>
+                </button>
+            </div>
+
+            <div class="exp-3d-presets" role="tablist" aria-label="Góc nhìn trước thiết lập">
+                <button type="button" class="exp-3d-preset is-active" data-3d-preset="front" role="tab" aria-selected="true">Trước</button>
+                <button type="button" class="exp-3d-preset" data-3d-preset="side" role="tab" aria-selected="false">Bên</button>
+                <button type="button" class="exp-3d-preset" data-3d-preset="rear" role="tab" aria-selected="false">Sau</button>
+                <button type="button" class="exp-3d-preset" data-3d-preset="top" role="tab" aria-selected="false">Trên</button>
+                <button type="button" class="exp-3d-preset" data-3d-preset="interior" role="tab" aria-selected="false">Nội thất</button>
+            </div>
+
+            <div class="exp-3d-loading" data-3d-loading>
+                <div class="exp-3d-spinner"></div>
+                <p>Đang tải mô hình 3D...</p>
+                <em class="exp-3d-loading-pct" data-3d-loading-pct>0%</em>
+            </div>
+
+            <div class="exp-3d-error" data-3d-error hidden>
+                <h4>Không thể tải mô hình 3D.</h4>
+                <p data-3d-error-msg>Vehicle 3D model is not installed. Need a real GLB/GLTF vehicle asset.</p>
+            </div>
+
+            <div class="exp-3d-hotspot-info" data-hotspot-info hidden>
+                <button type="button" class="exp-hotspot-close" data-hotspot-close aria-label="Đóng">✕</button>
+                <h4 data-hotspot-title></h4>
+                <p data-hotspot-desc></p>
+            </div>
+        </div>
+
+        <div class="shell">
+            <div class="exp-3d-legend reveal">
+                <div class="exp-legend-item">
+                    <span class="exp-legend-dot" style="background:#e7332d"></span>
+                    <span>Điểm nổi bật</span>
+                </div>
+                <div class="exp-legend-item">
+                    <span class="exp-legend-dot" style="background:rgba(255,255,255,.3)"></span>
+                    <span>Kéo để xoay · Cuộn để thu phóng</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── Experience Categories ── *@
+    <section class="exp-categories">
+        <div class="shell">
+            <div class="exp-categories__header reveal">
+                <p class="eyebrow">7 lĩnh vực trải nghiệm</p>
+                <h2>Hiểu sâu.<br />Cảm nhận rõ.</h2>
+            </div>
+
+            <div class="exp-cat-grid">
+                <article class="exp-cat-card reveal" data-category="design">
+                    <div class="exp-cat-card__number">01</div>
+                    <h3>Thiết kế</h3>
+                    <p>Đường nét, tỷ lệ, ánh sáng và chi tiết khí động học tạo nên bản sắc riêng.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Ngoại thất</span><span>Đèn pha</span><span>Kính chắn gió</span><span>Gầm xe</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal reveal--delay-1" data-category="interior">
+                    <div class="exp-cat-card__number">02</div>
+                    <h3>Nội thất</h3>
+                    <p>Chất liệu, vị trí ngồi, màn hình và hệ thống giải trí — tất cả phục vụ người lái.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Bảng điều khiển</span><span>Ghế</span><span>Màn hình</span><span>Âm thanh</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal reveal--delay-2" data-category="driving">
+                    <div class="exp-cat-card__number">03</div>
+                    <h3>Cảm giác lái</h3>
+                    <p>Phản hồi vô lăng, độ ổn định khi vào cua và cảm giác tăng tốc.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Vô lăng</span><span>Hệ treo</span><span>Phanh</span><span>Độ ổn định</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal" data-category="performance">
+                    <div class="exp-cat-card__number">04</div>
+                    <h3>Hiệu năng</h3>
+                    <p>Công suất, mô-men xoắn, thời gian tăng tốc và tốc độ cực đại.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Công suất</span><span>Mô-men xoắn</span><span>0-100 km/h</span><span>Tốc độ</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal reveal--delay-1" data-category="technology">
+                    <div class="exp-cat-card__number">05</div>
+                    <h3>Công nghệ</h3>
+                    <p>Hệ thống hỗ trợ lái, màn hình kỹ thuật số, kết nối và giải trí.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>ADAS</span><span>Màn hình</span><span>Kết nối</span><span>Điều khiển giọng nói</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal reveal--delay-2" data-category="safety">
+                    <div class="exp-cat-card__number">06</div>
+                    <h3>An toàn</h3>
+                    <p>Hệ thống túi khí, phanh ABS, cân bằng điện tử và hỗ trợ lái xe.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Túi khí</span><span>ABS</span><span>ESC</span><span>Hỗ trợ đậu xe</span>
+                    </div>
+                </article>
+                <article class="exp-cat-card reveal" data-category="efficiency">
+                    <div class="exp-cat-card__number">07</div>
+                    <h3>Hiệu quả</h3>
+                    <p>Mức tiêu hao nhiên liệu, dung tích bình và phạm vi hoạt động.</p>
+                    <div class="exp-cat-card__tags">
+                        <span>Tiêu thụ</span><span>Bình nhiên liệu</span><span>Phạm vi</span><span>Sạc nhanh</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    @* ── Showroom Environment ── *@
+    <section class="exp-showroom" id="exp-showroom">
+        <div class="shell">
+            <div class="exp-showroom__header reveal">
+                <div>
+                    <p class="eyebrow">Showroom ảo</p>
+                    <h2>Môi trường<br />thích ứng.</h2>
+                </div>
+                <p>Mỗi tương tác thay đổi ánh sáng và không gian xung quanh xe.</p>
+            </div>
+
+            <div class="exp-showroom__grid reveal reveal--delay-1">
+                <div class="exp-showroom-card">
+                    <div class="exp-showroom-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    </div>
+                    <h3>Ánh sáng ban ngày</h3>
+                    <p>Showroom với ánh sáng tự nhiên, tôn lên đường nét và màu sơn.</p>
+                </div>
+                <div class="exp-showroom-card">
+                    <div class="exp-showroom-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                    </div>
+                    <h3>Ánh sáng ban đêm</h3>
+                    <p>Không gian tối, đèn pha và đèn hậu nổi bật trong bóng tối.</p>
+                </div>
+                <div class="exp-showroom-card">
+                    <div class="exp-showroom-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <h3>Chi tiết gần</h3>
+                    <p>Camera zoom vào chi tiết: đèn pha, la-zăng, tay nắm cửa.</p>
+                </div>
+                <div class="exp-showroom-card">
+                    <div class="exp-showroom-card__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                    </div>
+                    <h3>Nội thất 360°</h3>
+                    <p>Đi vào bên trong khoang lái, cảm nhận vị trí ngồi và tầm nhìn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ── CTA ── *@
+    <section class="shell exp-cta reveal">
+        <div>
+            <p class="eyebrow">Bước tiếp theo</p>
+            <h2>Để dữ liệu lùi lại.<br />Để cảm giác lên tiếng.</h2>
+        </div>
+        <div>
+            <p>Chọn một khung giờ riêng để trực tiếp trải nghiệm cách xe phản hồi với cung đường của bạn.</p>
+            <a class="button button--signal" href="/TestDrive">Đặt lịch lái thử <span>→</span></a>
+        </div>
+    </section>
+
+</main>
+
+<script type="application/json" id="exp-vehicles-data">
+@Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+    Model.FeaturedVehicles.Select(v => new {
+        v.Slug, v.Name, v.BrandName, v.Model, v.Variant,
+        v.ImagePath, v.PowerDisplay, v.AccelerationDisplay, v.TopSpeedDisplay,
+        v.FuelType, v.PriceDisplay, v.Category, v.Drivetrain, v.Seats,
+        FuelLabel = v.FuelType == "EV" ? "TẦM HOẠT ĐỘNG" : "TIÊU THỤ",
+        FuelValue = v.FuelType == "EV" ? v.Range : v.FuelEconomyDisplay,
+        FuelDesc = v.FuelType == "EV" ? "Chu trình hỗn hợp WLTP" : "Chu trình hỗn hợp",
+        v.BasePrice
+    })))
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="~/js/experience.js" asp-append-version="true" defer></script>

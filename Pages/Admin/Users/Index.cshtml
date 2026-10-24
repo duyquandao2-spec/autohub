@@ -1,0 +1,94 @@
+@page
+@model AutoHub.Pages.Admin.Users.IndexModel
+@{
+    ViewData["Title"] = "Người dùng";
+    ViewData["AdminBreadcrumb"] = "Người dùng";
+    ViewData["CurrentPage"] = Model.Paged.CurrentPage;
+    ViewData["TotalPages"] = Model.Paged.TotalPages == 0 ? 1 : Model.Paged.TotalPages;
+    ViewData["BaseUrl"] = "/admin/users";
+    ViewData["Query"] = new Dictionary<string, string?> { ["search"] = Model.Search, ["role"] = Model.Role, ["status"] = Model.Status };
+}
+<div class="apx-bar">
+    <form method="get" class="apx-bar" style="margin-bottom:0">
+        <input class="apx-input apx-search" type="search" name="search" value="@Model.Search" placeholder="Tìm theo tên, email, điện thoại..." />
+        <select class="apx-select" name="role">
+            <option value="">Tất cả vai trò</option>
+            @foreach (var r in AutoHub.Pages.Admin.Users.IndexModel.AssignableRoles.Concat(new[]{ "Administrator", "SuperAdmin" }).Distinct())
+            {
+                <option value="@r" selected="@(Model.Role == r)">@r</option>
+            }
+        </select>
+        <select class="apx-select" name="status">
+            <option value="">Tất cả trạng thái</option>
+            <option value="active" selected="@(Model.Status == "active")">Hoạt động</option>
+            <option value="deactivated" selected="@(Model.Status == "deactivated")">Vô hiệu hóa</option>
+        </select>
+        <button class="apx-btn" type="submit">Lọc</button>
+        <a class="apx-btn apx-btn--ghost" asp-page="/admin/users/index">Đặt lại</a>
+    </form>
+</div>
+
+<div class="apx-panel">
+    <div class="apx-table-wrap">
+        <table class="apx-table">
+            <thead><tr><th>Người dùng</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Thao tác</th></tr></thead>
+            <tbody>
+                @if (Model.Paged.Items.Count == 0)
+                {
+                    <tr><td colspan="5" class="muted">Không có người dùng nào.</td></tr>
+                }
+                @foreach (var u in Model.Paged.Items)
+                {
+                    <tr>
+                        <td><a asp-page="/admin/users/detail" asp-route-id="@u.Id">@u.FullName</a><br /><span class="muted">@u.Email</span></td>
+                        <td>
+                            <form method="post" asp-page-handler="Role" style="display:flex;align-items:center;gap:6px">
+                                <input type="hidden" name="id" value="@u.Id" />
+                                <select class="apx-select" name="role" style="min-width:110px">
+                                    @foreach (var r in AutoHub.Pages.Admin.Users.IndexModel.AssignableRoles)
+                                    {
+                                        <option value="@r" selected="@(u.Roles.Contains(r))">@r</option>
+                                    }
+                                    @if (u.Roles.Any(x => x == "Administrator" || x == "SuperAdmin"))
+                                    {
+                                        <option value="@(u.Roles.Contains("SuperAdmin") ? "SuperAdmin" : "Administrator")" selected>@(u.Roles.Contains("SuperAdmin") ? "SuperAdmin" : "Administrator")</option>
+                                    }
+                                </select>
+                                <button class="apx-btn apx-btn--ghost apx-btn--sm" type="submit" @(u.Id == Model.CurrentUserId ? "disabled" : "")>Đổi</button>
+                            </form>
+                        </td>
+                        <td>
+                            @if (u.IsDeactivated)
+                            {
+                                <span class="badge badge--muted">Vô hiệu hóa</span>
+                            }
+                            else if (!u.EmailConfirmed)
+                            {
+                                <span class="badge badge--warn">Chưa xác nhận</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge--ok">Hoạt động</span>
+                            }
+                        </td>
+                        <td class="muted">@u.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (u.Id != Model.CurrentUserId)
+                            {
+                                <form method="post" asp-page-handler="Deactivate">
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <input type="hidden" name="deactivate" value="@(!u.IsDeactivated)" />
+                                    <button class="apx-btn apx-btn--danger apx-btn--sm" type="submit" data-confirm="Bạn có chắc chắn?">@(u.IsDeactivated ? "Kích hoạt lại" : "Vô hiệu hóa")</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Paged.TotalPages > 1)
+    {
+        <div style="padding:14px 20px;border-top:1px solid var(--line)"><partial name="_AdminPager" /></div>
+    }
+</div>

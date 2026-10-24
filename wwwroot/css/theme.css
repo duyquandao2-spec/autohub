@@ -1,0 +1,320 @@
+/* ═══════════════════════════════════════════════════════════════
+   AUTOHUB Theme — Light/Dark mode layer
+   Dark remains the untouched default identity (site.css).
+   This file only ADDS: theme toggle UI + [data-theme="light"] overrides.
+   Telemetry/product imagery intentionally stays cinematic-dark in
+   light mode for premium contrast.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Theme toggle (existing utility/header area) ───────────── */
+.theme-toggle{
+    position:relative;display:grid;place-items:center;width:38px;height:38px;
+    background:transparent;border:0;color:white;transition:transform .25s var(--ease);
+}
+.theme-toggle:hover{transform:rotate(14deg)}
+.theme-toggle svg{position:absolute;width:19px;height:19px;transition:opacity .22s var(--ease),transform .3s var(--ease)}
+.theme-toggle .icon-sun{opacity:1;transform:none}
+.theme-toggle .icon-moon{opacity:0;transform:rotate(-70deg)}
+html[data-theme="light"] .theme-toggle .icon-sun{opacity:0;transform:rotate(70deg)}
+html[data-theme="light"] .theme-toggle .icon-moon{opacity:1;transform:none}
+.theme-toggle:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+
+/* ── Theme transition (colors only, no layout) ─────────────── */
+html.is-theme-switching body,
+html.is-theme-switching .site-header,
+html.is-theme-switching .mobile-nav,
+html.is-theme-switching main,
+html.is-theme-switching footer,
+html.is-theme-switching section,
+html.is-theme-switching article,
+html.is-theme-switching aside,
+html.is-theme-switching input,
+html.is-theme-switching select,
+html.is-theme-switching textarea,
+html.is-theme-switching .button,
+html.is-theme-switching .contact-hub__toggle,
+html.is-theme-switching .contact-hub__tooltip{
+    transition:background-color .32s var(--ease),border-color .32s var(--ease),color .32s var(--ease),box-shadow .32s var(--ease)!important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME — deliberate neutral automotive palette
+   bg #eef0f1 · panel #fbfcfc · ink #15181a · muted #5f676b
+   Signal Red unchanged. Stage imagery stays dark on purpose.
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"]{
+    --ink:#eef0f1;
+    --panel:#fbfcfc;
+    --line:rgba(16,20,22,.13);
+    --muted:#5f676b;
+    --silver:#15181a;
+}
+
+/* ── Base / header ── */
+html[data-theme="light"] body{background:radial-gradient(circle at 95% 0%,rgba(91,103,108,.12),transparent 25%),var(--ink)}
+html[data-theme="light"] .site-header.is-scrolled{background:rgba(240,242,242,.9)}
+html[data-theme="light"] .desktop-nav a{color:#565f63}
+html[data-theme="light"] .desktop-nav a:hover{color:#101315}
+html[data-theme="light"] .search-link,
+html[data-theme="light"] .menu-button,
+html[data-theme="light"] .theme-toggle{color:#15181a}
+html[data-theme="light"] .mobile-nav{background:rgba(240,242,242,.97)}
+
+/* ── Hero — wash edges into the light page ── */
+html[data-theme="light"] .hero__vignette{
+    background:
+        radial-gradient(circle at var(--hero-x) var(--hero-y),rgba(210,225,232,.11),transparent 22%),
+        linear-gradient(90deg,rgba(238,240,241,.94),rgba(238,240,241,.4) 43%,rgba(238,240,241,.14) 70%,rgba(238,240,241,.82)),
+        linear-gradient(0deg,var(--ink),transparent 33%);
+}
+html[data-theme="light"] .hero h1{color:#15181a}
+html[data-theme="light"] .hero h1 span{color:#454d52}
+html[data-theme="light"] .hero__lede{color:#495154}
+html[data-theme="light"] .hero__mark{color:rgba(21,24,26,.14)}
+html[data-theme="light"] .button--outline{border-color:rgba(16,20,22,.34);color:#15181a}
+html[data-theme="light"] .circle-icon{border-color:rgba(16,20,22,.34)}
+
+/* ── Data legibility: labels designed for dark surfaces ── */
+html[data-theme="light"] .eyebrow{color:#565f63}
+html[data-theme="light"] .stage-caption .eyebrow{color:#cfd6d8}
+html[data-theme="light"] .press-signal__eyebrow{color:#565f63}
+html[data-theme="light"] .press-signal__desc,
+html[data-theme="light"] .ps-empty__text{color:#4d555a}
+html[data-theme="light"] .machine-specs small,
+html[data-theme="light"] .machine-summary small{color:#566065}
+html[data-theme="light"] .machine-open{border-color:rgba(16,20,22,.3);color:#15181a}
+html[data-theme="light"] .machine-open:hover{color:#fff}
+
+/* ── Metric cards ── */
+html[data-theme="light"] .metric-card{
+    border-color:var(--line);
+    background:linear-gradient(130deg,rgba(255,255,255,.94),rgba(250,251,251,.82));
+    box-shadow:inset 0 1px rgba(255,255,255,.65),0 16px 44px rgba(30,40,45,.12);
+}
+html[data-theme="light"] .metric-card:hover{border-color:rgba(16,20,22,.32)}
+html[data-theme="light"] .metric-card__number{color:rgba(21,24,26,.09)}
+
+/* ── Press Signal ── */
+html[data-theme="light"] .press-signal{background:linear-gradient(180deg,#eef0f1,#e6e9ea);border-bottom-color:rgba(16,20,22,.1)}
+html[data-theme="light"] .press-signal__title{color:#15181a}
+html[data-theme="light"] .ps-grid{border-color:rgba(16,20,22,.1);background:#fafbfb}
+html[data-theme="light"] .ps-lead{
+    background:
+        radial-gradient(circle at 74% 19%,rgba(231,51,45,.16),transparent 22%),
+        linear-gradient(155deg,rgba(255,255,255,.55),transparent 41%),#f2f4f5;
+    border-bottom-color:rgba(16,20,22,.08);
+}
+html[data-theme="light"] .ps-lead__bg img{mix-blend-mode:multiply;opacity:.85}
+html[data-theme="light"] .ps-lead__grad{
+    background:
+        linear-gradient(90deg,rgba(242,244,245,.95),rgba(242,244,245,.42) 75%,rgba(242,244,245,.75)),
+        linear-gradient(0deg,#edf0f1,transparent 72%);
+}
+html[data-theme="light"] .ps-lead__top{color:rgba(21,24,26,.58)}
+html[data-theme="light"] .ps-lead__metric-val{color:#15181a}
+html[data-theme="light"] .ps-lead__metric-lbl{color:#565f63}
+html[data-theme="light"] .ps-lead__title,
+html[data-theme="light"] .ps-card__title{color:#171a1c}
+html[data-theme="light"] .ps-lead__excerpt{color:#4d555a}
+html[data-theme="light"] .ps-lead__cta{color:#15181a;border-top-color:rgba(16,20,22,.15)}
+html[data-theme="light"] .ps-card{background:#f6f8f8;border-bottom-color:rgba(16,20,22,.08)}
+html[data-theme="light"] .ps-card:hover{background:#eceff0}
+html[data-theme="light"] .ps-card__grad{background:linear-gradient(90deg,rgba(246,248,248,.96),rgba(246,248,248,.72) 58%,rgba(246,248,248,.26))}
+html[data-theme="light"] .ps-card__num{color:rgba(21,24,26,.28)}
+html[data-theme="light"] .ps-card__meta{color:rgba(21,24,26,.62)}
+html[data-theme="light"] .ps-card__arrow{border-color:rgba(16,20,22,.28);color:#15181a}
+html[data-theme="light"] .ps-ticker{background:#e8ebec;color:rgba(21,24,26,.6)}
+html[data-theme="light"] .ps-ticker__left{color:#15181a}
+html[data-theme="light"] .ps-skel{border-color:rgba(16,20,22,.1);background:#fafbfb}
+html[data-theme="light"] .ps-skel__lead{background:#f0f2f3}
+html[data-theme="light"] .ps-skel__card{background:#f6f8f8;border-bottom-color:rgba(16,20,22,.08)}
+html[data-theme="light"] .ps-skel__ticker{background:#e8ebec}
+
+/* ── Sections / split / cabin / machines ── */
+html[data-theme="light"] .split-section,
+html[data-theme="light"] .machines-section,
+html[data-theme="light"] .product-story-section{background:#e8ebeb}
+html[data-theme="light"] .split-copy{background:#f6f8f8}
+html[data-theme="light"] .cabin-copy{background:#fdfefe}
+html[data-theme="light"] .telemetry-stage{background:linear-gradient(90deg,rgba(231,51,45,.15) 1px,transparent 1px),linear-gradient(rgba(16,20,22,.05) 1px,transparent 1px),#eef1f2;background-size:84px 100%,100% 54px,auto}
+html[data-theme="light"] .machine-summary{background:linear-gradient(135deg,#ffffff,#eff2f3)}
+html[data-theme="light"] .machine-status{color:#565f63}
+html[data-theme="light"] .machine-status b{color:#15181a}
+html[data-theme="light"] .number-grid span{color:#687276}
+html[data-theme="light"] .stage-caption>p:last-child{color:rgba(245,247,247,.85)}
+
+/* ── Vehicle cards / grid ── */
+html[data-theme="light"] .machine-card{background:#fdfefe}
+html[data-theme="light"] .machine-card:hover{border-color:rgba(16,20,22,.34);box-shadow:0 24px 54px rgba(30,40,45,.14)}
+html[data-theme="light"] .image-grid{background:linear-gradient(90deg,rgba(231,51,45,.14) 1px,transparent 1px),linear-gradient(to top,#fdfefe,transparent 74%)}
+html[data-theme="light"] .machine-card h3+p{color:#596266}
+html[data-theme="light"] .empty-state{border-color:rgba(16,20,22,.3)}
+html[data-theme="light"] .empty-state a{color:#15181a}
+
+/* ── Brand chips / carousel / pagination / search ── */
+html[data-theme="light"] .brand-chip.brand-chip--slide,
+html[data-theme="light"] .brand-carousel__arrow,
+html[data-theme="light"] .pagination__btn,
+html[data-theme="light"] .pagination__page{background:#ffffff}
+html[data-theme="light"] .brand-chip.brand-chip--slide{color:#495154}
+html[data-theme="light"] .text-action--muted{color:#565f63}
+
+/* ── Appointment / CTA panels ── */
+html[data-theme="light"] .appointment,
+html[data-theme="light"] .product-cta{
+    background:radial-gradient(circle at 77% 15%,rgba(231,51,45,.14),transparent 20%),linear-gradient(130deg,#ffffff,#edf0f1 62%);
+}
+
+/* ── Footer ── */
+html[data-theme="light"] .site-footer{color:#62696d}
+html[data-theme="light"] .site-footer div,
+html[data-theme="light"] .site-footer__brand{color:#15181a}
+html[data-theme="light"] .site-footer a{color:#444c50}
+
+/* ── Product detail (stages stay dark by design) ── */
+html[data-theme="light"] .product-hero{background:radial-gradient(circle at 84% 30%,rgba(88,101,108,.16),transparent 28%),#f0f2f3}
+html[data-theme="light"] .product-back{color:#565f63}
+html[data-theme="light"] .product-back:hover{color:#101315}
+html[data-theme="light"] .product-hero__kind{color:#414a4f}
+html[data-theme="light"] .product-hero__lede,
+html[data-theme="light"] .product-story__content>p{color:#4a5257}
+html[data-theme="light"] .product-signal{color:#677176}
+html[data-theme="light"] .product-section-heading>p{color:#565f63}
+html[data-theme="light"] .product-spec-grid article{background:linear-gradient(140deg,#ffffff,#eff2f3)}
+html[data-theme="light"] .product-spec-grid article:hover{background:#ffffff}
+html[data-theme="light"] .product-spec-grid small{color:#59636a}
+html[data-theme="light"] .product-spec-grid strong{color:#15181a}
+html[data-theme="light"] .product-spec-grid span{color:#5f676b}
+html[data-theme="light"] .product-story__rule{background:linear-gradient(90deg,var(--signal),rgba(16,20,22,.16) 38%,transparent)}
+html[data-theme="light"] .product-story__mono{color:#677176!important}
+html[data-theme="light"] .product-cta>div:last-child>p{color:#4a5257}
+
+/* ── Forms ── */
+html[data-theme="light"] .form-hero{background:radial-gradient(circle at 84% 20%,rgba(88,101,108,.14),transparent 30%),#f0f2f3}
+html[data-theme="light"] .form-hero h1{color:#15181a}
+html[data-theme="light"] .form-hero__accent{-webkit-text-stroke:1px rgba(21,24,26,.55)}
+html[data-theme="light"] .form-hero__lede{color:#4a5257}
+html[data-theme="light"] .form-block-title{color:#15181a}
+html[data-theme="light"] .field label,
+html[data-theme="light"] .field__label{color:#414a4f}
+html[data-theme="light"] .field input,
+html[data-theme="light"] .field select,
+html[data-theme="light"] .field textarea{background:#ffffff;border-color:rgba(16,20,22,.18)}
+html[data-theme="light"] .field input::placeholder,
+html[data-theme="light"] .field textarea::placeholder{color:#8b9397}
+html[data-theme="light"] .field input[type="date"]{color-scheme:light}
+html[data-theme="light"] .field-error{color:#c0322d}
+html[data-theme="light"] .slot-chip span{background:#ffffff;border-color:rgba(16,20,22,.2);color:#414a4f}
+html[data-theme="light"] .slot-chip:hover span{border-color:rgba(16,20,22,.45);color:#101315}
+html[data-theme="light"] .slot-chip input:checked+span{background:rgba(231,51,45,.08);color:#101315}
+html[data-theme="light"] .form-aside{background:#fbfcfc}
+html[data-theme="light"] .form-aside h3{color:#15181a}
+html[data-theme="light"] .form-aside li{color:#4a5257}
+html[data-theme="light"] .form-aside li strong{color:#171a1c}
+html[data-theme="light"] .form-aside__signal{color:#677176}
+html[data-theme="light"] .booking-success h2{color:#15181a}
+html[data-theme="light"] .booking-success>p{color:#4a5257}
+html[data-theme="light"] .booking-success__ref{color:#101315}
+html[data-theme="light"] .booking-success__summary dt{color:#677176}
+html[data-theme="light"] .booking-success__summary dd{color:#22282b}
+html[data-theme="light"] .booking-success__note{color:#677176!important}
+
+/* ── Floating contact hub ── */
+html[data-theme="light"] .contact-hub__toggle{
+    background:radial-gradient(circle at 30% 25%,#ffffff,#eef1f2 72%);
+    border-color:rgba(16,20,22,.18);
+    box-shadow:0 12px 35px rgba(30,40,45,.22),inset 0 1px 0 rgba(255,255,255,.7);
+}
+html[data-theme="light"] .contact-hub__item{border-color:rgba(16,20,22,.12)}
+html[data-theme="light"] .contact-hub__item--light{
+    background:#ffffff;border-color:rgba(16,20,22,.22);
+    box-shadow:0 10px 24px rgba(30,40,45,.2),inset 0 1px 0 rgba(255,255,255,.9);
+}
+html[data-theme="light"] .contact-hub__tooltip{
+    background:#ffffff;color:#15181a;border-color:rgba(16,20,22,.14);
+    box-shadow:0 8px 20px rgba(30,40,45,.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPERIENCE PAGE — Light mode overrides
+   ═══════════════════════════════════════════════════════════════ */
+html[data-theme="light"] .exp-hero{
+    background:radial-gradient(circle at 84% 30%,rgba(88,101,108,.16),transparent 30%),#f0f2f3;
+}
+html[data-theme="light"] .exp-hero__vignette{
+    background:
+        radial-gradient(circle at 70% 48%,rgba(231,51,45,.08),transparent 22%),
+        linear-gradient(90deg,rgba(240,242,243,.92),rgba(240,242,243,.35) 43%,rgba(240,242,243,.08) 70%,rgba(240,242,243,.75)),
+        linear-gradient(0deg,#eef0f1,transparent 33%);
+}
+html[data-theme="light"] .exp-hero__grid{
+    background:
+        linear-gradient(90deg,rgba(231,51,45,.1) 1px,transparent 1px),
+        linear-gradient(rgba(16,20,22,.04) 1px,transparent 1px);
+}
+html[data-theme="light"] .exp-hero__copy h1{color:#15181a}
+html[data-theme="light"] .exp-hero__subtitle{color:rgba(21,24,26,.35)}
+html[data-theme="light"] .exp-hero__lede{color:#4a5257}
+html[data-theme="light"] .exp-hero__mark{color:rgba(21,24,26,.06)}
+html[data-theme="light"] .exp-vehicles__header h2,
+html[data-theme="light"] .exp-3d__header h2,
+html[data-theme="light"] .exp-categories__header h2,
+html[data-theme="light"] .exp-showroom__header h2{color:#15181a}
+html[data-theme="light"] .exp-vehicles__desc,
+html[data-theme="light"] .exp-3d__header p,
+html[data-theme="light"] .exp-showroom__header p{color:#565f63}
+
+/* Vehicle cards */
+html[data-theme="light"] .exp-vehicle-card{background:#fdfefe}
+html[data-theme="light"] .exp-vehicle-card:hover{border-color:rgba(16,20,22,.34);box-shadow:0 20px 50px rgba(30,40,45,.12)}
+html[data-theme="light"] .exp-vehicle-card__info h3{color:#15181a}
+html[data-theme="light"] .exp-vehicle-card__info p{color:#687276}
+
+/* Detail panel */
+html[data-theme="light"] .exp-detail__info{background:#fbfcfc;border-left-color:rgba(16,20,22,.1)}
+html[data-theme="light"] .exp-detail__header h2{color:#15181a}
+html[data-theme="light"] .exp-detail__kind{color:#565f63}
+html[data-theme="light"] .exp-spec-card{background:rgba(16,20,22,.03);border-color:rgba(16,20,22,.1)}
+html[data-theme="light"] .exp-spec-card strong{color:#15181a}
+html[data-theme="light"] .exp-spec-card small{color:#5f676b}
+html[data-theme="light"] .exp-spec-card span{color:#677176}
+html[data-theme="light"] .exp-detail__source{background:#fbfcfc;border-top-color:rgba(16,20,22,.1)}
+
+/* 3D viewer stays dark by design */
+html[data-theme="light"] .exp-3d-section{background:var(--ink)}
+html[data-theme="light"] .exp-3d-viewer{background:#080a0c}
+
+/* Categories */
+html[data-theme="light"] .exp-cat-card{background:#fdfefe}
+html[data-theme="light"] .exp-cat-card:hover{border-color:rgba(16,20,22,.34);box-shadow:0 8px 24px rgba(30,40,45,.1)}
+html[data-theme="light"] .exp-cat-card h3{color:#15181a}
+html[data-theme="light"] .exp-cat-card p{color:#4d555a}
+html[data-theme="light"] .exp-cat-card__number{color:rgba(231,51,45,.25)}
+html[data-theme="light"] .exp-cat-card__tags span{color:#5f676b;border-color:rgba(16,20,22,.1);background:rgba(16,20,22,.03)}
+
+/* Showroom */
+html[data-theme="light"] .exp-showroom-card{background:#fdfefe}
+html[data-theme="light"] .exp-showroom-card:hover{border-color:rgba(16,20,22,.34);box-shadow:0 8px 24px rgba(30,40,45,.1)}
+html[data-theme="light"] .exp-showroom-card h3{color:#15181a}
+html[data-theme="light"] .exp-showroom-card p{color:#4d555a}
+
+/* CTA */
+html[data-theme="light"] .exp-cta{
+    background:
+        radial-gradient(circle at 77% 15%,rgba(231,51,45,.12),transparent 20%),
+        linear-gradient(130deg,#ffffff,#edf0f1 62%);
+}
+html[data-theme="light"] .exp-cta h2{color:#15181a}
+html[data-theme="light"] .exp-cta p{color:#4d555a}
+
+/* ── Reduced motion: kill theme transition ── */
+@media(prefers-reduced-motion:reduce){
+    html.is-theme-switching *{transition-duration:.01ms!important}
+    .theme-toggle{transition:none}
+    .theme-toggle:hover{transform:none}
+}
+
+/* ── Mobile: keep the toggle compact inside the existing header row ── */
+@media(max-width:600px){
+    .theme-toggle{width:34px;height:34px}
+}
